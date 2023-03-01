@@ -64,7 +64,7 @@ class Context(staticmaps.Context):
             if colors is not None:
                 color = colors[id]
             point = staticmaps.create_latlng(lat, lon)
-            self.add_object(staticmaps.Marker(point, color=color, size=size)) # type: ignore
+            self.add_object(staticmaps.Marker(point, color=color, size=size))
     def add_heat_hashes(self, lats, lons, precision):
         hashes = calculate_geohashes(lats, lons, precision)
         counts = dict(value_counts(hashes))

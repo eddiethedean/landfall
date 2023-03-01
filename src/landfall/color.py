@@ -1,3 +1,7 @@
+"""
+Functions for using colors.
+"""
+
 import random
 
 import staticmaps
