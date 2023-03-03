@@ -4,3 +4,4 @@ more-itertools
 tinytim
 geodude
 range_key_dict
+distinctipy

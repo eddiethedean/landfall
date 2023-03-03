@@ -9,6 +9,7 @@ import staticmaps
 import pygeodesy
 from PIL.Image import Image
 
+
 from landfall.color import process_colors, random_color
 
 
@@ -30,12 +31,10 @@ def plot_points(
     context = staticmaps.Context()
     context.set_tile_provider(tile_provider)
     count = len(lats)
-    if colors == 'random':
-        colors = [random_color() for _ in range(count)]
-    elif colors is not None:
-        colors = process_colors(colors)
+    if colors is not None:
+        colors = process_colors(colors, count)
     else:
-        colors = [color for _ in range(count)]
+        colors = list(repeat(color, count))
 
     for lat, lon, color in zip(lats, lons, colors):
         point = staticmaps.create_latlng(lat, lon)
