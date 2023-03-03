@@ -10,7 +10,7 @@ import pygeodesy
 from PIL.Image import Image
 
 
-from landfall.color import process_colors, random_color
+from landfall.color import process_colors, process_id_colors
 
 
 tp = staticmaps.tile_provider_OSM
@@ -20,6 +20,8 @@ def plot_points(
     lats,
     lons,
     colors: Optional[Union[Sequence, str]] = None,
+    ids: Optional[Sequence] = None,
+    id_colors: Optional[Mapping] = None,
     tile_provider=tp,
     point_size=10,
     window_size=(500, 400),
@@ -35,6 +37,9 @@ def plot_points(
         colors = process_colors(colors, count)
     else:
         colors = list(repeat(color, count))
+
+    if (ids, id_colors) is not (None, None):
+        colors = process_id_colors(ids, id_colors)
 
     for lat, lon, color in zip(lats, lons, colors):
         point = staticmaps.create_latlng(lat, lon)

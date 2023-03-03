@@ -4,10 +4,9 @@ Functions for using colors.
 
 from itertools import repeat
 import random
-from typing import Sequence, List
+from typing import Sequence, List, Mapping
 
 from staticmaps import Color, parse_color
-from color_tol import qualitative, sequential, diverging
 
 from .test_colors import get_colors
 
@@ -25,12 +24,6 @@ def process_colors(
 ) -> List[Color]:
     if colors == 'random':
         colors = [random_color() for _ in range(count)]
-    elif colors == 'qualitative':
-        colors = convert_colors(qualitative(count).html_colors)
-    elif colors == 'sequential':
-        colors = convert_colors(sequential(count).html_colors)
-    elif colors == 'diverging':
-        colors = convert_colors(diverging(count).html_colors)
     elif colors == 'test_colors':
         colors = convert_colors(get_colors(count))
     else:
@@ -51,6 +44,10 @@ def convert_color(color) -> Color:
         return Color(*color)
     else:
         raise ValueError('process_color only takes str, Color or (r, g, b)')
+    
+
+def process_id_colors(ids: Sequence, id_colors: Mapping) -> List[Color]:
+    ...
     
 
 
