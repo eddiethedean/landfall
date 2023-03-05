@@ -8,7 +8,7 @@ from typing import Sequence, List, Mapping
 
 from staticmaps import Color, parse_color
 
-from .test_colors import get_colors
+from .distinctipy import get_colors
 
 
 def random_color():
