@@ -22,12 +22,15 @@ def process_colors(
     colors: Sequence,
     count: int
 ) -> List[Color]:
-    if colors == 'random':
-        colors = [random_color() for _ in range(count)]
-    elif colors == 'distinct':
-        colors = convert_colors(get_distict_colors(count))
-    elif colors == 'wheel':
-        colors = convert_colors(get_wheel_colors(count))
+    if type(colors) is str:
+        if colors == 'random':
+            colors = [random_color() for _ in range(count)]
+        elif colors == 'distinct':
+            colors = convert_colors(get_distict_colors(count))
+        elif colors == 'wheel':
+            colors = convert_colors(get_wheel_colors(count))
+        else:
+            raise ValueError('str must be "random", "distinct", or "wheel"')
     else:
         colors = convert_colors(colors)
     return colors
