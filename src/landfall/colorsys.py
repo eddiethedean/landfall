@@ -1,12 +1,13 @@
-import colorsys 
+import colorsys
+from typing import Set, Tuple 
  
     
-def hsvt_to_rgb(h, s, v):
+def hsvt_to_rgb(h, s, v) -> Tuple[int, int, int]:
     (r, g, b) = colorsys.hsv_to_rgb(h, s, v) 
     return int(r*255), int(g*255), int(b*255)
  
     
-def get_distinct_colors(n):
+def get_wheel_colors(n) -> Set[Tuple[int, int, int]]:
     hue_partition = 1 / (n + 1)
     colors = set()
     for value in range(0, n):

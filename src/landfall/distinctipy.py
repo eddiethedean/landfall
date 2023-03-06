@@ -3,7 +3,7 @@ from typing import List
 import distinctipy
 
 
-def get_colors(
+def get_distict_colors(
     qty: int,
     pastel_factor = 0
 ) -> List[tuple]:

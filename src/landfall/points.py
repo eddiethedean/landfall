@@ -21,7 +21,7 @@ def plot_points(
     lons,
     colors: Optional[Union[Sequence, str]] = None,
     ids: Optional[Sequence] = None,
-    id_colors: Optional[Mapping] = None,
+    id_colors: Optional[Union[Mapping, str]] = None,
     tile_provider=tp,
     point_size=10,
     window_size=(500, 400),
@@ -38,12 +38,12 @@ def plot_points(
     else:
         colors = list(repeat(color, count))
 
-    if (ids, id_colors) is not (None, None):
+    if ids is not None and id_colors is not None:
         colors = process_id_colors(ids, id_colors)
 
-    for lat, lon, color in zip(lats, lons, colors):
+    for lat, lon, clr in zip(lats, lons, colors):
         point = staticmaps.create_latlng(lat, lon)
-        marker = staticmaps.Marker(point, color=color, size=point_size)
+        marker = staticmaps.Marker(point, color=clr, size=point_size)
         context.add_object(marker)
 
     _center, _zoom = context.determine_center_zoom(*window_size)
