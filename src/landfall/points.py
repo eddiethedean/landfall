@@ -76,6 +76,11 @@ def plot_points_data(
     lats = data[lat_name]
     lons = data[lon_name]
     return plot_points(
-        lats, lons, tile_provider,
-        point_size, window_size, zoom,
-        color, set_zoom, center)
+        lats, lons,
+        tile_provider=tile_provider,
+        point_size=point_size,
+        window_size=window_size,
+        zoom=zoom,
+        color=color,
+        set_zoom=set_zoom,
+        center=center)

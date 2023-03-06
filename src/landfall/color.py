@@ -23,19 +23,13 @@ def process_colors(
     count: int
 ) -> List[Color]:
     if colors == 'random':
-        print('random')
         colors = [random_color() for _ in range(count)]
     elif colors == 'distinct':
-        print('distict')
         colors = convert_colors(get_distict_colors(count))
     elif colors == 'wheel':
-        print('wheel')
         colors = convert_colors(get_wheel_colors(count))
     else:
-        print('converting colors')
         colors = convert_colors(colors)
-        print(colors)
-    print('returning')
     return colors
 
 
