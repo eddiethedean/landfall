@@ -1,7 +1,7 @@
 ![Landfall Logo](https://raw.githubusercontent.com/eddiethedean/landfall/main/docs/landfall_logo.png)
 -----------------
 
-# SQLAlchemize: Easy to use functions for sql table changes
+# Landfall: Easy to use functions plotting geographic points
 [![PyPI Latest Release](https://img.shields.io/pypi/v/landfall.svg)](https://pypi.org/project/landfall/)
 ![Tests](https://github.com/eddiethedean/landfall/actions/workflows/tests.yml/badge.svg)
 
