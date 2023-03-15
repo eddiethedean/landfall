@@ -20,8 +20,8 @@ pip install landfall
 
 ## Dependencies
 - [py-staticmaps - A python module to create static map images (PNG, SVG) with markers, geodesic lines, etc.](https://github.com/flopp/py-staticmaps)
-- [PyGeodesy - A pure python implementation of geodesy tools used here for geographic calculations like geohashes] (https://github.com/mrJean1/PyGeodesy)
-- [distinctipy - A lightweight package for generating visually distinct colours.] (https://github.com/alan-turing-institute/distinctipy)
+- [PyGeodesy - A pure python implementation of geodesy tools used here for geographic calculations like geohashes](https://github.com/mrJean1/PyGeodesy)
+- [distinctipy - A lightweight package for generating visually distinct colours.](https://github.com/alan-turing-institute/distinctipy)
 
 
 ## Example
