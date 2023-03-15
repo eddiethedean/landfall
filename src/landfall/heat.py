@@ -55,7 +55,7 @@ class Context(staticmaps.Context):
         self,
         cluster,
         size=6,
-        color: Optional[staticmaps.Color]=None,
+        color: staticmaps.Color=RED,
         fill_color: Optional[staticmaps.Color]=None,
         width=2,
         colors=None

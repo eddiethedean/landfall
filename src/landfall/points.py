@@ -51,19 +51,23 @@ def plot_points(
         context.add_object(marker)
 
     _center, _zoom = context.determine_center_zoom(*window_size)
-    context.set_zoom(_zoom + zoom)
+    if _zoom is not None:
+        context.set_zoom(_zoom + zoom)
 
     if center is not None:
         if type(center) is tuple:
-            point = staticmaps.create_latlng(*center)
+            lat, lon = center
+            point = staticmaps.create_latlng(lat, lon)
         if type(center) is str:
             lat, lon = pygeodesy.geohash.decode(*center)
             point = staticmaps.create_latlng(float(lat), float(lon))
+        else:
+            raise ValueError('center must be tuple or str')
         context.set_center(point)
     if set_zoom is not None:
         context.set_zoom(set_zoom)
     
-    return context.render_pillow(*window_size)
+    return context.render_pillow(*window_size) # type: ignore
     
 
 def plot_points_data(
