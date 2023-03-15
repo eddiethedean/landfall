@@ -32,4 +32,4 @@ lons = [-82.49, -82.49, -82.46]
 
 landfall.plot_points(lats, lons)
 ```
-!(https://raw.githubusercontent.com/eddiethedean/landfall/main/docs/example_map.png)
+![](https://raw.githubusercontent.com/eddiethedean/landfall/main/docs/example_map.png)
