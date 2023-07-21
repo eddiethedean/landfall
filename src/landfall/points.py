@@ -7,9 +7,7 @@ from typing import Mapping, Optional, Sequence, Union
 from itertools import repeat
 
 import staticmaps
-import pygeodesy
 from PIL.Image import Image
-
 
 from landfall.color import process_colors, process_id_colors
 
@@ -28,8 +26,7 @@ def plot_points(
     window_size=(500, 400),
     zoom=0,
     color=staticmaps.color.BLUE,
-    set_zoom=None,
-    center=None
+    set_zoom=None
 ) -> Image:
     context = staticmaps.Context()
     context.set_tile_provider(tile_provider)
@@ -50,20 +47,10 @@ def plot_points(
         marker = staticmaps.Marker(point, color=clr, size=point_size)
         context.add_object(marker)
 
-    _center, _zoom = context.determine_center_zoom(*window_size)
+    _, _zoom = context.determine_center_zoom(*window_size)
     if _zoom is not None:
         context.set_zoom(_zoom + zoom)
 
-    if center is not None:
-        if type(center) is tuple:
-            lat, lon = center
-            point = staticmaps.create_latlng(lat, lon)
-        if type(center) is str:
-            lat, lon = pygeodesy.geohash.decode(*center)
-            point = staticmaps.create_latlng(float(lat), float(lon))
-        else:
-            raise ValueError('center must be tuple or str')
-        context.set_center(point)
     if set_zoom is not None:
         context.set_zoom(set_zoom)
     
@@ -83,8 +70,7 @@ def plot_points_data(
     window_size=(500, 400),
     zoom=0,
     color=staticmaps.color.BLUE,
-    set_zoom=None,
-    center=None
+    set_zoom=None
 ) -> Image:
     lats = data[latitude_name]
     lons = data[longitude_name]
@@ -104,5 +90,4 @@ def plot_points_data(
         window_size=window_size,
         zoom=zoom,
         color=color,
-        set_zoom=set_zoom,
-        center=center)
+        set_zoom=set_zoom)
