@@ -3,3 +3,4 @@ more-itertools
 tinytim
 range_key_dict
 distinctipy
+Pillow<=9.5.0
