@@ -1,7 +1,6 @@
 """
 Functions for plotting points.
 """
-
 from pprint import pprint
 from typing import Mapping, Optional, Sequence, Union
 from itertools import repeat
@@ -43,9 +42,7 @@ def plot_points(
         pprint(color_mapping)
 
     for lat, lon, clr in zip(latitudes, longitudes, colors):
-        point = staticmaps.create_latlng(lat, lon)
-        marker = staticmaps.Marker(point, color=clr, size=point_size)
-        context.add_object(marker)
+        add_point(context, lat, lon, clr, point_size)
 
     _, _zoom = context.determine_center_zoom(*window_size)
     if _zoom is not None:
@@ -91,3 +88,26 @@ def plot_points_data(
         zoom=zoom,
         color=color,
         set_zoom=set_zoom)
+
+
+def add_point(
+    context: staticmaps.Context,
+    lat: float,
+    lon: float,
+    color: staticmaps.Color,
+    point_size: int
+) -> None:
+    point = staticmaps.create_latlng(lat, lon)
+    marker = staticmaps.Marker(point, color=color, size=point_size)
+    context.add_object(marker)
+
+
+def add_points(
+        context: staticmaps.Context,
+        latitudes: Sequence[float],
+        longitudes: Sequence[float],
+        colors: Sequence[staticmaps.Color],
+        point_size: int
+) -> None:
+    for lat, lon, clr in zip(latitudes, longitudes, colors):
+        add_point(context, lat, lon, clr, point_size)
