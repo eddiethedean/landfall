@@ -1,8 +1,7 @@
 """
 Functions for plotting points.
 """
-from pprint import pprint
-from typing import Mapping, Optional, Sequence, Union
+from typing import Mapping, Optional, Sequence, Tuple, Union
 from itertools import repeat
 
 import staticmaps
@@ -15,8 +14,8 @@ tp = staticmaps.tile_provider_OSM
 
 
 def plot_points(
-    latitudes,
-    longitudes,
+    latitudes: Sequence,
+    longitudes: Optional[Sequence] = None,
     colors: Optional[Union[Sequence, str]] = None,
     ids: Optional[Sequence] = None,
     id_colors: Optional[Union[Mapping, str]] = None,
@@ -31,6 +30,9 @@ def plot_points(
     context.set_tile_provider(tile_provider)
     count = len(latitudes)
 
+    if longitudes is None:
+        latitudes, longitudes = points_to_lats_lons(latitudes)
+
     if colors is not None:
         colors = process_colors(colors, count)
     else:
@@ -38,8 +40,6 @@ def plot_points(
 
     if ids is not None and id_colors is not None:
         colors = process_id_colors(ids, id_colors)
-        color_mapping = {color.int_rgb(): ids for color, ids in zip(colors, ids)}
-        pprint(color_mapping)
 
     for lat, lon, clr in zip(latitudes, longitudes, colors):
         add_point(context, lat, lon, clr, point_size)
@@ -88,6 +88,18 @@ def plot_points_data(
         zoom=zoom,
         color=color,
         set_zoom=set_zoom)
+
+
+def points_to_lats_lons(
+    points: Sequence[Sequence[float]]
+) -> Tuple[Sequence[float], Sequence[float]]:
+    latitudes, longitudes = zip(*points)
+    return latitudes, longitudes
+
+
+def plot_points_tuples(points: Sequence[tuple], **kwargs) -> Image:
+    latitudes, longitudes = points_to_lats_lons(points)
+    return plot_points(latitudes, longitudes, **kwargs)
 
 
 def add_point(
