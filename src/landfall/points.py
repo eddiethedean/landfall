@@ -26,9 +26,12 @@ def plot_points(
     zoom=0,
     color=staticmaps.color.BLUE,
     set_zoom=None,
-    flip_coords=False
+    flip_coords=False,
+    context: Optional[staticmaps.Context] = None
 ) -> Image:
-    context = staticmaps.Context()
+    if context is None:
+        context = staticmaps.Context()
+
     context.set_tile_provider(tile_provider)
     count = len(latitudes)
 
@@ -72,7 +75,8 @@ def plot_points_data(
     window_size=(500, 400),
     zoom=0,
     color=staticmaps.color.BLUE,
-    set_zoom=None
+    set_zoom=None,
+    context: Optional[staticmaps.Context] = None
 ) -> Image:
     lats = data[latitude_name]
     lons = data[longitude_name]
@@ -92,7 +96,8 @@ def plot_points_data(
         window_size=window_size,
         zoom=zoom,
         color=color,
-        set_zoom=set_zoom)
+        set_zoom=set_zoom,
+        context=context)
 
 
 def points_to_lats_lons(
@@ -111,8 +116,8 @@ def add_point(
     context: staticmaps.Context,
     lat: float,
     lon: float,
-    color: staticmaps.Color,
-    point_size: int
+    color: staticmaps.Color = staticmaps.color.BLUE,
+    point_size: int = 10
 ) -> None:
     point = staticmaps.create_latlng(lat, lon)
     marker = staticmaps.Marker(point, color=color, size=point_size)
@@ -123,8 +128,10 @@ def add_points(
         context: staticmaps.Context,
         latitudes: Sequence[float],
         longitudes: Sequence[float],
-        colors: Sequence[staticmaps.Color],
-        point_size: int
+        colors: Optional[Sequence[staticmaps.Color]] = None,
+        point_size: int = 10
 ) -> None:
+    if colors is None:
+        colors = list(repeat(staticmaps.color.BLUE, len(latitudes)))
     for lat, lon, clr in zip(latitudes, longitudes, colors):
         add_point(context, lat, lon, clr, point_size)

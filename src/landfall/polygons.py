@@ -1,7 +1,7 @@
 """
 Functions for plotting polygons.
 """
-from typing import Iterable, List, Tuple
+from typing import Iterable, List, Optional, Tuple
 import staticmaps
 from PIL.Image import Image
 
@@ -27,9 +27,11 @@ def plot_polygons(
         color=RED,
         width=2,
         size=(800, 600),
-        flip_coords=False
+        flip_coords=False,
+        context: Optional[staticmaps.Context] = None
 ) -> Image:
-    context = staticmaps.Context()
+    if context is None:
+        context = staticmaps.Context()
     context.set_tile_provider(tileprovider)
     if flip_coords:
         polygons = [flip_polygon_coords(polygon) for polygon in polygons]
@@ -38,15 +40,17 @@ def plot_polygons(
 
 
 def plot_polygon(
-        polygon: Iterable[Tuple[float, float]],
-        tileprovider=tp,
-        fill_color=TRED,
-        color=RED,
-        width=2,
-        size=(800, 600),
-        flip_coords=False
+    polygon: Iterable[Tuple[float, float]],
+    tileprovider=tp,
+    fill_color=TRED,
+    color=RED,
+    width=2,
+    size=(800, 600),
+    flip_coords=False,
+    context: Optional[staticmaps.Context] = None
 ) -> Image:
-    context = staticmaps.Context()
+    if context is None:
+        context = staticmaps.Context()
     context.set_tile_provider(tileprovider)
     if flip_coords:
         polygon = flip_polygon_coords(polygon)
@@ -60,7 +64,7 @@ def add_polygon(
     fill_color,
     width,
     color,
-    flip_coords=False
+    flip_coords=False,
 ) -> None:
     if flip_coords:
         polygon = flip_polygon_coords(polygon)
