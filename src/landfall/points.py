@@ -16,6 +16,7 @@ tp = staticmaps.tile_provider_OSM
 def plot_points(
     latitudes: Sequence,
     longitudes: Optional[Sequence] = None,
+    *,
     colors: Optional[Union[Sequence, str]] = None,
     ids: Optional[Sequence] = None,
     id_colors: Optional[Union[Mapping, str]] = None,
@@ -24,7 +25,8 @@ def plot_points(
     window_size=(500, 400),
     zoom=0,
     color=staticmaps.color.BLUE,
-    set_zoom=None
+    set_zoom=None,
+    flip_coords=False
 ) -> Image:
     context = staticmaps.Context()
     context.set_tile_provider(tile_provider)
@@ -32,6 +34,9 @@ def plot_points(
 
     if longitudes is None:
         latitudes, longitudes = points_to_lats_lons(latitudes)
+
+    if flip_coords:
+        latitudes, longitudes = longitudes, latitudes
 
     if colors is not None:
         colors = process_colors(colors, count)
