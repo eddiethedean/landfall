@@ -26,7 +26,7 @@ def plot_polygons(
         fill_color=TRED,
         color=RED,
         width=2,
-        size=(500, 400),
+        window_size=(500, 400),
         flip_coords=False,
         context: Optional[staticmaps.Context] = None
 ) -> Image:
@@ -36,7 +36,7 @@ def plot_polygons(
     if flip_coords:
         polygons = [flip_polygon_coords(polygon) for polygon in polygons]
     add_polygons(context, polygons, fill_color=fill_color, width=width, color=color)
-    return context.render_pillow(*size) # type: ignore
+    return context.render_pillow(*window_size) # type: ignore
 
 
 def plot_polygon(
@@ -45,7 +45,7 @@ def plot_polygon(
     fill_color=TRED,
     color=RED,
     width=2,
-    size=(500, 400),
+    window_size=(500, 400),
     flip_coords=False,
     context: Optional[staticmaps.Context] = None
 ) -> Image:
@@ -55,7 +55,7 @@ def plot_polygon(
     if flip_coords:
         polygon = flip_polygon_coords(polygon)
     add_polygon(context, polygon, fill_color=fill_color, width=width, color=color)
-    return context.render_pillow(*size) # type: ignore
+    return context.render_pillow(*window_size) # type: ignore
 
 
 def add_polygon(
