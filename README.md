@@ -1,13 +1,13 @@
 ![Landfall Logo](https://raw.githubusercontent.com/eddiethedean/landfall/main/docs/landfall_logo.png)
 -----------------
 
-# Landfall: Easy to use functions for plotting geographic points on static maps
+# Landfall: Easy to use functions for plotting geographic data on static maps
 [![PyPI Latest Release](https://img.shields.io/pypi/v/landfall.svg)](https://pypi.org/project/landfall/)
 ![Tests](https://github.com/eddiethedean/landfall/actions/workflows/tests.yml/badge.svg)
 
 ## What is it?
 
-**Landfall** is a Python package with easy to use functions for plotting geographic points on a static map.
+**Landfall** is a Python package with easy to use functions for plotting geographic data on a static map.
 
 ## Where to get it
 The source code is currently hosted on GitHub at:
