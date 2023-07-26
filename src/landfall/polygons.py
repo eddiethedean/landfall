@@ -26,7 +26,7 @@ def plot_polygons(
         fill_color=TRED,
         color=RED,
         width=2,
-        size=(800, 600),
+        size=(500, 400),
         flip_coords=False,
         context: Optional[staticmaps.Context] = None
 ) -> Image:
@@ -45,7 +45,7 @@ def plot_polygon(
     fill_color=TRED,
     color=RED,
     width=2,
-    size=(800, 600),
+    size=(500, 400),
     flip_coords=False,
     context: Optional[staticmaps.Context] = None
 ) -> Image:
