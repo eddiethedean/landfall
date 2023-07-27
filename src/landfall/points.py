@@ -9,6 +9,8 @@ from PIL.Image import Image
 
 from landfall.color import process_colors, process_id_colors
 
+from landfall.plot import plot_colors, plot_zoom
+
 
 tp = staticmaps.tile_provider_OSM
 
@@ -35,29 +37,20 @@ def plot_points(
     context.set_tile_provider(tile_provider)
     count = len(latitudes)
 
+    colors = plot_colors(count=count, colors=colors, ids=ids,
+                            id_colors=id_colors, color=color)
+
     if longitudes is None:
         latitudes, longitudes = points_to_lats_lons(latitudes)
 
     if flip_coords:
         latitudes, longitudes = longitudes, latitudes
 
-    if colors is not None:
-        colors = process_colors(colors, count)
-    else:
-        colors = list(repeat(color, count))
-
-    if ids is not None and id_colors is not None:
-        colors = process_id_colors(ids, id_colors)
-
     for lat, lon, clr in zip(latitudes, longitudes, colors):
         add_point(context, lat, lon, clr, point_size)
 
-    _, _zoom = context.determine_center_zoom(*window_size)
-    if _zoom is not None:
-        context.set_zoom(_zoom + zoom)
-
-    if set_zoom is not None:
-        context.set_zoom(set_zoom)
+    zoom = plot_zoom(context, window_size, zoom, set_zoom)
+    context.set_zoom(zoom)
     
     return context.render_pillow(*window_size) # type: ignore
     

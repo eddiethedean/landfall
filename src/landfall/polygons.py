@@ -1,9 +1,11 @@
 """
 Functions for plotting polygons.
 """
-from typing import Iterable, List, Optional, Tuple
+from typing import Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 import staticmaps
 from PIL.Image import Image
+
+from landfall.plot import plot_colors, plot_fill_colors
 
 tp = staticmaps.tile_provider_OSM
 TRED = staticmaps.Color(255, 0, 0, 100)
@@ -21,21 +23,32 @@ def flip_polygon_coords(
 
 
 def plot_polygons(
-        polygons,
-        tileprovider=tp,
-        fill_color=TRED,
-        color=RED,
-        width=2,
-        window_size=(500, 400),
-        flip_coords=False,
-        context: Optional[staticmaps.Context] = None
+    polygons,
+    *,
+    color=RED,
+    fill_same: Optional[bool] = None,
+    fill_transparency: Optional[int] = None,
+    fill_colors: Optional[Union[Sequence, str]] = None,
+    fill_color: Optional[staticmaps.Color] = TRED,
+    ids: Optional[Sequence] = None,
+    id_fill_colors: Optional[Union[Mapping, str]] = None,
+    tileprovider=tp,
+    width=2,
+    window_size=(500, 400),
+    flip_coords: bool =False,
+    context: Optional[staticmaps.Context] = None
 ) -> Image:
     if context is None:
         context = staticmaps.Context()
     context.set_tile_provider(tileprovider)
     if flip_coords:
         polygons = [flip_polygon_coords(polygon) for polygon in polygons]
-    add_polygons(context, polygons, fill_color=fill_color, width=width, color=color)
+    count = len(polygons)
+    colors = plot_colors(count, color=color)
+    fill_colors = plot_fill_colors(count, colors=colors, ids=ids, fill_same=fill_same,
+                                   fill_transparency=fill_transparency, fill_colors=fill_colors,
+                                   fill_color=fill_color, id_fill_colors=id_fill_colors)
+    add_polygons(context, polygons, fill_colors=fill_colors, width=width, colors=colors)
     return context.render_pillow(*window_size) # type: ignore
 
 
@@ -78,10 +91,10 @@ def add_polygon(
 def add_polygons(
     context: staticmaps.Context,
     polygons: Iterable[Iterable[Tuple[float, float]]],
-    fill_color,
+    fill_colors,
     width,
-    color,
+    colors,
     flip_coords=False
 ) -> None:
-    for polygon in polygons:
+    for polygon, color, fill_color in zip(polygons, colors, fill_colors):
         add_polygon(context, polygon, fill_color, width, color, flip_coords=flip_coords)
