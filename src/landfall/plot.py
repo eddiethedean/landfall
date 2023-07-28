@@ -3,7 +3,7 @@ from itertools import repeat
 
 import staticmaps
 
-from landfall.color import process_colors, process_id_colors
+from landfall.color import convert_color, process_colors, process_id_colors
 
 
 def plot_colors(
@@ -16,6 +16,8 @@ def plot_colors(
     if colors is not None:
         colors = process_colors(colors, count)
     else:
+        if color is not None:
+            color = convert_color(color)
         colors = list(repeat(color, count))
 
     if ids is not None and id_colors is not None:
@@ -31,13 +33,14 @@ def plot_fill_colors(
     fill_same: Optional[bool] = None,
     fill_transparency: Optional[int] = None,
     fill_colors: Optional[Union[Sequence, str]] = None,
-    fill_color: Optional[staticmaps.Color] = None,
+    fill_color: staticmaps.Color = staticmaps.Color(0, 0, 0, 0),
     id_fill_colors: Optional[Union[Mapping, str]] = None
 ) -> List[staticmaps.Color]:
+    if fill_color is not None:
+        fill_color = convert_color(fill_color)
     if fill_same:
         fill_colors = [set_transparency(c, fill_transparency) for c in colors]
-
-    if fill_colors is not None:
+    elif fill_colors is not None:
         fill_colors = process_colors(fill_colors, count)
     else:
         fill_colors = list(repeat(fill_color, count))

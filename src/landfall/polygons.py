@@ -26,11 +26,13 @@ def plot_polygons(
     polygons,
     *,
     color=RED,
+    colors: Optional[Union[Sequence, str]] = None,
     fill_same: Optional[bool] = None,
     fill_transparency: Optional[int] = None,
     fill_colors: Optional[Union[Sequence, str]] = None,
-    fill_color: Optional[staticmaps.Color] = TRED,
+    fill_color: staticmaps.Color = TRED,
     ids: Optional[Sequence] = None,
+    id_colors: Optional[Union[Mapping, str]] = None,
     id_fill_colors: Optional[Union[Mapping, str]] = None,
     tileprovider=tp,
     width=2,
@@ -44,7 +46,8 @@ def plot_polygons(
     if flip_coords:
         polygons = [flip_polygon_coords(polygon) for polygon in polygons]
     count = len(polygons)
-    colors = plot_colors(count, color=color)
+    colors = plot_colors(count=count, colors=colors, ids=ids,
+                            id_colors=id_colors, color=color)
     fill_colors = plot_fill_colors(count, colors=colors, ids=ids, fill_same=fill_same,
                                    fill_transparency=fill_transparency, fill_colors=fill_colors,
                                    fill_color=fill_color, id_fill_colors=id_fill_colors)
