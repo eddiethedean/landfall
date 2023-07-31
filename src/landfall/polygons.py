@@ -42,16 +42,38 @@ def plot_polygons(
 ) -> Image:
     if context is None:
         context = staticmaps.Context()
+
     context.set_tile_provider(tileprovider)
+
     if flip_coords:
         polygons = [flip_polygon_coords(polygon) for polygon in polygons]
+
     count = len(polygons)
-    colors = plot_colors(count=count, colors=colors, ids=ids,
-                            id_colors=id_colors, color=color)
-    fill_colors = plot_fill_colors(count, colors=colors, ids=ids, fill_same=fill_same,
-                                   fill_transparency=fill_transparency, fill_colors=fill_colors,
-                                   fill_color=fill_color, id_fill_colors=id_fill_colors)
-    add_polygons(context, polygons, fill_colors=fill_colors, width=width, colors=colors)
+
+    colors = plot_colors(
+        count=count,
+        colors=colors,
+        ids=ids,
+        id_colors=id_colors,
+        color=color)
+    
+    fill_colors = plot_fill_colors(
+        count,
+        colors=colors,
+        ids=ids,
+        fill_same=fill_same,
+        fill_transparency=fill_transparency,
+        fill_colors=fill_colors,
+        fill_color=fill_color,
+        id_fill_colors=id_fill_colors)
+    
+    add_polygons(
+        context,
+        polygons,
+        fill_colors=fill_colors,
+        width=width,
+        colors=colors)
+    
     return context.render_pillow(*window_size) # type: ignore
 
 
@@ -67,10 +89,19 @@ def plot_polygon(
 ) -> Image:
     if context is None:
         context = staticmaps.Context()
+
     context.set_tile_provider(tileprovider)
+
     if flip_coords:
         polygon = flip_polygon_coords(polygon)
-    add_polygon(context, polygon, fill_color=fill_color, width=width, color=color)
+
+    add_polygon(
+        context,
+        polygon,
+        fill_color=fill_color,
+        width=width,
+        color=color)
+    
     return context.render_pillow(*window_size) # type: ignore
 
 
@@ -84,11 +115,14 @@ def add_polygon(
 ) -> None:
     if flip_coords:
         polygon = flip_polygon_coords(polygon)
-    context.add_object(staticmaps.Area(
-        create_polygon_points(polygon),
-        fill_color=fill_color,
-        width=width,
-        color=color))
+    context.add_object(
+        staticmaps.Area(
+            create_polygon_points(polygon),
+            fill_color=fill_color,
+            width=width,
+            color=color
+        )
+    )
     
 
 def add_polygons(
@@ -100,4 +134,10 @@ def add_polygons(
     flip_coords=False
 ) -> None:
     for polygon, color, fill_color in zip(polygons, colors, fill_colors):
-        add_polygon(context, polygon, fill_color, width, color, flip_coords=flip_coords)
+        add_polygon(
+            context,
+            polygon,
+            fill_color,
+            width,
+            color,
+            flip_coords=flip_coords)
