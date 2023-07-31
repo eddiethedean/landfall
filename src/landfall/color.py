@@ -3,7 +3,7 @@ Functions for using colors.
 """
 
 import random
-from typing import Sequence, List, Mapping, Union
+from typing import Optional, Sequence, List, Mapping, Union
 
 from staticmaps import Color, parse_color
 
@@ -11,7 +11,8 @@ from .distinctipy import get_distict_colors
 from .colorsys import get_wheel_colors
 
 
-def random_color():
+def random_color(rng: Optional[int] = None):
+    random.seed(rng)
     r = random.randrange(0, 256)
     g = random.randrange(0, 256)
     b = random.randrange(0, 256)
@@ -20,13 +21,14 @@ def random_color():
 
 def process_colors(
     colors: Sequence,
-    count: int
+    count: int,
+    rng: Optional[int] = None
 ) -> List[Color]:
     if type(colors) is str:
         if colors == 'random':
-            colors = [random_color() for _ in range(count)]
+            colors = [random_color(rng) for _ in range(count)]
         elif colors == 'distinct':
-            colors = convert_colors(get_distict_colors(count))
+            colors = convert_colors(get_distict_colors(count, rng=rng))
         elif colors == 'wheel':
             colors = convert_colors(get_wheel_colors(count))
         else:
