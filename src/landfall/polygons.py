@@ -45,6 +45,40 @@ def plot_polygons(
 
     context.set_tile_provider(tileprovider)
 
+    add_polygons(
+        context,
+        polygons,
+        color=color,
+        colors=colors,
+        fill_same=fill_same,
+        fill_transparency=fill_transparency,
+        fill_colors=fill_colors,
+        fill_color=fill_color,
+        ids=ids,
+        id_colors=id_colors,
+        id_fill_colors=id_fill_colors,
+        width=width,
+        flip_coords=flip_coords
+    )
+    
+    return context.render_pillow(*window_size) # type: ignore
+
+def add_polygons(
+    context: staticmaps.Context,
+    polygons,
+    color=RED,
+    colors: Optional[Union[Sequence, str]] = None,
+    fill_same: Optional[bool] = None,
+    fill_transparency: Optional[int] = None,
+    fill_colors: Optional[Union[Sequence, str]] = None,
+    fill_color: staticmaps.Color = TRED,
+    ids: Optional[Sequence] = None,
+    id_colors: Optional[Union[Mapping, str]] = None,
+    id_fill_colors: Optional[Union[Mapping, str]] = None,
+    width=2,
+    flip_coords: bool =False
+) -> None:
+
     if flip_coords:
         polygons = [flip_polygon_coords(polygon) for polygon in polygons]
 
@@ -55,7 +89,8 @@ def plot_polygons(
         colors=colors,
         ids=ids,
         id_colors=id_colors,
-        color=color)
+        color=color
+    )
     
     fill_colors = plot_fill_colors(
         count,
@@ -65,17 +100,19 @@ def plot_polygons(
         fill_transparency=fill_transparency,
         fill_colors=fill_colors,
         fill_color=fill_color,
-        id_fill_colors=id_fill_colors)
+        id_fill_colors=id_fill_colors
+    )
     
-    add_polygons(
-        context,
-        polygons,
-        fill_colors=fill_colors,
-        width=width,
-        colors=colors)
+    for polygon, color, fill_color in zip(polygons, colors, fill_colors):
+        add_polygon(
+            context,
+            polygon,
+            fill_color,
+            width,
+            color,
+            flip_coords=flip_coords
+        )
     
-    return context.render_pillow(*window_size) # type: ignore
-
 
 def plot_polygon(
     polygon: Iterable[Tuple[float, float]],
@@ -100,7 +137,8 @@ def plot_polygon(
         polygon,
         fill_color=fill_color,
         width=width,
-        color=color)
+        color=color
+    )
     
     return context.render_pillow(*window_size) # type: ignore
 
@@ -123,21 +161,3 @@ def add_polygon(
             color=color
         )
     )
-    
-
-def add_polygons(
-    context: staticmaps.Context,
-    polygons: Iterable[Iterable[Tuple[float, float]]],
-    fill_colors,
-    width,
-    colors,
-    flip_coords=False
-) -> None:
-    for polygon, color, fill_color in zip(polygons, colors, fill_colors):
-        add_polygon(
-            context,
-            polygon,
-            fill_color,
-            width,
-            color,
-            flip_coords=flip_coords)

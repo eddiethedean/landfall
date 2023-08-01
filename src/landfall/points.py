@@ -42,7 +42,8 @@ def plot_points(
         id_colors=id_colors,
         point_size=point_size,
         color=color,
-        flip_coords=flip_coords)
+        flip_coords=flip_coords
+    )
 
     zoom = plot_zoom(context, window_size, zoom, set_zoom)
     context.set_zoom(zoom)
@@ -54,6 +55,7 @@ def add_points(
     context: staticmaps.Context,
     latitudes: Sequence,
     longitudes: Optional[Sequence] = None,
+    *,
     colors: Optional[Union[Sequence, str]] = None,
     ids: Optional[Sequence] = None,
     id_colors: Optional[Union[Mapping, str]] = None,
@@ -68,7 +70,8 @@ def add_points(
         colors=colors,
         ids=ids,
         id_colors=id_colors,
-        color=color)
+        color=color
+    )
 
     if longitudes is None:
         latitudes, longitudes = points_to_lats_lons(latitudes)
@@ -119,7 +122,8 @@ def plot_points_data(
         color=color,
         set_zoom=set_zoom,
         flip_coords=flip_coords,
-        context=context)
+        context=context
+    )
 
 
 def points_to_lats_lons(
