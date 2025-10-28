@@ -14,6 +14,11 @@ class MockTileDownloader(staticmaps.TileDownloader):
         pass
 
     def get(
-        self, provider: staticmaps.TileProvider, cache_dir: str, zoom: int, x: int, y: int
+        self,
+        provider: staticmaps.TileProvider,
+        cache_dir: str,
+        zoom: int,
+        x: int,
+        y: int,
     ) -> typing.Optional[bytes]:
         return self._dummy_image_data

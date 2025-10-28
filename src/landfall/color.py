@@ -3,15 +3,15 @@ Functions for using colors.
 """
 
 import random
-from typing import Optional, Sequence, List, Mapping, Union
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 from staticmaps import Color, parse_color
 
-from .distinctipy import get_distict_colors
+from .distinctipy import get_distinct_colors
 from .colorsys import get_wheel_colors
 
 
-def random_color(rng: Optional[int] = None):
+def random_color(rng: Optional[int] = None) -> Color:
     random.seed(rng)
     r = random.randrange(0, 256)
     g = random.randrange(0, 256)
@@ -20,17 +20,15 @@ def random_color(rng: Optional[int] = None):
 
 
 def process_colors(
-    colors: Sequence,
-    count: int,
-    rng: Optional[int] = None
+    colors: Sequence[Any], count: int, rng: Optional[int] = None
 ) -> List[Color]:
-    if type(colors) is str:
-        if colors == 'random':
+    if isinstance(colors, str):
+        if colors == "random":
             colors = [random_color(rng) for _ in range(count)]
-        elif colors == 'distinct':
-            colors = convert_colors(get_distict_colors(count, rng=rng))
-        elif colors == 'wheel':
-            colors = convert_colors(get_wheel_colors(count))
+        elif colors == "distinct":
+            colors = convert_colors(get_distinct_colors(count, rng=rng))
+        elif colors == "wheel":
+            colors = convert_colors(list(get_wheel_colors(count)))
         else:
             raise ValueError('str must be "random", "distinct", or "wheel"')
     else:
@@ -38,11 +36,13 @@ def process_colors(
     return colors
 
 
-def convert_colors(colors) -> List[Color]:
+def convert_colors(colors: Sequence[Any]) -> List[Color]:
     return [convert_color(color) for color in colors]
 
 
-def convert_color(color) -> Color:
+def convert_color(
+    color: Union[str, Color, Tuple[int, int, int], Tuple[int, int, int, int]],
+) -> Color:
     if isinstance(color, str):
         return parse_color(color)
     if isinstance(color, Color):
@@ -50,21 +50,25 @@ def convert_color(color) -> Color:
     if len(color) in (3, 4):
         return Color(*color)
     else:
-        raise ValueError('process_color only takes str, Color or (r, g, b)')
-    
+        raise ValueError(
+            f"convert_color requires str, Color, or RGB tuple, "
+            f"got {type(color).__name__}"
+        )
 
-def process_id_colors(ids: Sequence, id_colors: Union[Mapping, str]) -> List[Color]:
+
+def process_id_colors(
+    ids: Sequence[Any], id_colors: Union[Mapping[Any, Any], str]
+) -> List[Color]:
     """Return a list of unique colors for each id."""
-    if type(id_colors) is str:
+    if isinstance(id_colors, str):
         id_colors = map_id_colors(ids, id_colors)
     return [convert_color(id_colors[id]) for id in ids]
 
 
-def map_id_colors(ids: Sequence, color_code: str) -> dict:
+def map_id_colors(ids: Sequence[Any], color_code: str) -> Dict[Any, Color]:
     """Map colors to each id."""
     count = len(ids)
     unique_ids = list(set(ids))
-    return {id: color for id, color in zip(unique_ids, process_colors(color_code, count))}
-    
-
-
+    return {
+        id: color for id, color in zip(unique_ids, process_colors(color_code, count))
+    }

@@ -1,4 +1,4 @@
-from typing import List, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any, List, Mapping, Optional, Sequence, Tuple, Union
 from itertools import repeat
 
 import staticmaps
@@ -8,9 +8,9 @@ from landfall.color import convert_color, process_colors, process_id_colors
 
 def plot_colors(
     count: int,
-    colors: Optional[Union[Sequence, str]] = None,
-    ids: Optional[Sequence] = None,
-    id_colors: Optional[Union[Mapping, str]] = None,
+    colors: Optional[Union[Sequence[Any], str]] = None,
+    ids: Optional[Sequence[Any]] = None,
+    id_colors: Optional[Union[Mapping[Any, Any], str]] = None,
     color: Optional[staticmaps.Color] = None,
 ) -> List[staticmaps.Color]:
     if colors is not None:
@@ -29,12 +29,12 @@ def plot_colors(
 def plot_fill_colors(
     count: int,
     colors: Sequence[staticmaps.Color],
-    ids: Optional[Sequence] = None,
+    ids: Optional[Sequence[Any]] = None,
     fill_same: Optional[bool] = None,
     fill_transparency: Optional[int] = None,
-    fill_colors: Optional[Union[Sequence, str]] = None,
+    fill_colors: Optional[Union[Sequence[Any], str]] = None,
     fill_color: staticmaps.Color = staticmaps.Color(0, 0, 0, 0),
-    id_fill_colors: Optional[Union[Mapping, str]] = None
+    id_fill_colors: Optional[Union[Mapping[Any, Any], str]] = None,
 ) -> List[staticmaps.Color]:
     if fill_color is not None:
         fill_color = convert_color(fill_color)
@@ -70,8 +70,7 @@ def plot_zoom(
 
 
 def set_transparency(
-    color: staticmaps.Color,
-    a: Optional[int] = None
+    color: staticmaps.Color, a: Optional[int] = None
 ) -> staticmaps.Color:
     if a is None:
         return color
