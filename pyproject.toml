@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "landfall"
-version = "0.3.6"
+version = "0.4.0"
 description = "Easy to use functions to plot geospatial data on maps using staticmaps."
 readme = "README.md"
 license = {text = "MIT"}
@@ -46,6 +46,15 @@ dev = [
     "mypy>=1.13.0",
     "flake8>=7.1.0",
     "tox>=4.0.0",
+]
+
+geo = [
+    "geopandas>=0.14.0",
+    "shapely>=2.0.0",
+]
+
+all = [
+    "landfall[geo]",
 ]
 
 [project.urls]

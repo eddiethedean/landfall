@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-01-27
+
+### Added
+- **Line/Polyline plotting** - `plot_line()`, `plot_lines()` for routes and paths
+- **Circle plotting** - `plot_circle()`, `plot_circles()` for buffer zones and coverage areas
+- **GeoJSON support** - `plot_geojson()`, `plot_geojson_file()` for industry-standard format
+- **GeoPandas integration** - Optional `plot_geodataframe()`, `plot_geometry()`, `plot_geometries()` for GeoDataFrame support
+- New Context methods: `add_line()`, `add_lines()`, `add_circle()`, `add_circles()`
+- Optional `[geo]` dependency group for GeoPandas/Shapely integration
+- Comprehensive test coverage for all new features (77+ new tests)
+- Support for radius units (meters/kilometers) in circle plotting
+- GeoJSON property extraction for styling (stroke, fill, marker-color, etc.)
+- Coordinate order handling (lat/lon vs lon/lat) across all new features
+
+### Changed
+- Expanded API surface with 8+ new functions
+- Enhanced Context class with geometry methods
+- Updated test count from 105+ to 180+ tests
+- Improved error handling and validation
+
+### Documentation
+- Added comprehensive examples for all new features
+- Updated API reference with new functions
+- Added installation instructions for GeoPandas support
+- Enhanced README with practical usage examples
+
 ## [0.3.6] - 2024-12-28
 
 ### Added

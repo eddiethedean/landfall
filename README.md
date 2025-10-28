@@ -13,13 +13,33 @@
 
 ## ✨ Features
 
-- 🗺️ **Easy geospatial plotting** - Plot points and polygons on static maps
+- 🗺️ **Easy geospatial plotting** - Plot points, polygons, lines, and circles on static maps
 - 🎨 **Smart color generation** - Automatic distinct color generation for data visualization
+- 📍 **GeoJSON support** - Plot industry-standard GeoJSON data directly
+- 🐼 **GeoPandas integration** - Optional integration with GeoDataFrames and Shapely geometries
 - 🔧 **Type-safe** - Full type annotations with mypy support
-- 🧪 **Well-tested** - 105+ tests with 80% coverage across Python 3.8-3.13
+- 🧪 **Well-tested** - 182+ tests with comprehensive coverage across Python 3.8-3.13
 - 🚀 **Modern packaging** - Built with modern `pyproject.toml` standards
 - 🔄 **Cross-platform** - Works on Windows, macOS, and Linux
 - 📦 **Minimal dependencies** - Only essential packages required
+
+## 🆕 What's New in v0.4.0
+
+**Major feature expansion with 4 new plotting capabilities:**
+
+- 🛣️ **Line/Polyline Plotting** - Plot routes, paths, and linear features with `plot_line()` and `plot_lines()`
+- ⭕ **Circle/Buffer Plotting** - Create coverage areas and buffer zones with `plot_circle()` and `plot_circles()`
+- 📄 **GeoJSON Support** - Plot industry-standard GeoJSON data directly with `plot_geojson()` and `plot_geojson_file()`
+- 🐼 **GeoPandas Integration** - Optional GeoDataFrame support with `plot_geodataframe()`, `plot_geometry()`, and `plot_geometries()`
+
+**Plus enhanced Context class with new methods:**
+- `add_line()`, `add_lines()` - Add lines to existing maps
+- `add_circle()`, `add_circles()` - Add circles to existing maps
+
+**Installation for GeoPandas support:**
+```bash
+pip install landfall[geo]
+```
 
 ## Requirements
 
@@ -40,12 +60,21 @@ pip install landfall
 pip install -e .[dev]
 ```
 
+### With GeoPandas Support
+```sh
+pip install landfall[geo]
+```
+
 This installs the package in editable mode with development dependencies including:
 - `pytest` - Testing framework
 - `pytest-cov` - Coverage reporting
 - `mypy` - Type checking
 - `flake8` - Linting
 - `tox` - Multi-environment testing
+
+**GeoPandas extras include:**
+- `geopandas>=0.14.0` - GeoDataFrame support
+- `shapely>=2.0.0` - Geometry operations
 
 ## Quick Start
 
@@ -106,6 +135,110 @@ context.add_polygon(polygon, fill_color="blue", color="red", width=2)
 image = context.render_pillow(800, 600)
 ```
 
+### Line Plotting
+```python
+import landfall
+
+# Plot lines/routes on a map
+lines = [
+    [(27.88, -82.49), (27.92, -82.46), (27.94, -82.44)],  # Route 1
+    [(27.90, -82.50), (27.95, -82.45), (27.98, -82.42)]   # Route 2
+]
+
+# Plot multiple lines with distinct colors
+landfall.plot_lines(lines, colors="distinct", width=3)
+
+# Plot single line
+line = [(27.88, -82.49), (27.92, -82.46), (27.94, -82.44)]
+landfall.plot_line(line, color="red", width=2)
+```
+
+### Circle/Buffer Plotting
+```python
+import landfall
+
+# Plot circles for coverage areas
+lats = [27.88, 27.92, 27.94]
+lons = [-82.49, -82.46, -82.44]
+radii = [1000, 2000, 1500]  # meters
+
+# Plot circles with fill colors
+landfall.plot_circles(lats, lons, radii, 
+                     fill_colors="distinct", 
+                     radius_unit="meters")
+
+# Plot single circle
+landfall.plot_circle(27.88, -82.49, 1000, 
+                    fill_color="blue", 
+                    color="red", 
+                    radius_unit="meters")
+```
+
+### GeoJSON Support
+```python
+import landfall
+
+# Plot GeoJSON data directly
+geojson_data = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-82.49, 27.88]
+            },
+            "properties": {
+                "name": "Location 1",
+                "marker-color": "red"
+            }
+        }
+    ]
+}
+
+# Plot GeoJSON from dict
+landfall.plot_geojson(geojson_data)
+
+# Plot GeoJSON from file
+landfall.plot_geojson_file("data.geojson")
+```
+
+### GeoPandas Integration (Optional)
+```python
+import landfall
+import geopandas as gpd
+from shapely.geometry import Point
+
+# Create GeoDataFrame
+data = {'name': ['A', 'B', 'C'], 'value': [10, 20, 30]}
+geometry = [Point(-82.49, 27.88), Point(-82.46, 27.92), Point(-82.44, 27.96)]
+gdf = gpd.GeoDataFrame(data, geometry=geometry)
+
+# Plot GeoDataFrame directly
+landfall.plot_geodataframe(gdf, color_column="value")
+
+# Plot individual Shapely geometries
+point = Point(-82.49, 27.88)
+landfall.plot_geometry(point)
+```
+
+### Using the Enhanced Context
+```python
+import landfall
+
+# Create a context for complex maps
+context = landfall.Context()
+
+# Add multiple elements
+context.add_points([27.88, 27.92], [-82.49, -82.46], colors="distinct")
+context.add_polygon(polygon, fill_color="blue", color="red", width=2)
+context.add_lines(lines, colors="random", width=2)
+context.add_circles([27.88], [-82.49], [1000], fill_color="yellow")
+
+# Render the map
+image = context.render_pillow(800, 600)
+```
+
 ## API Reference
 
 ### Core Functions
@@ -113,8 +246,20 @@ image = context.render_pillow(800, 600)
 - `plot_points(lats, lons, **kwargs)` - Plot points on a map
 - `plot_polygon(polygon, **kwargs)` - Plot a single polygon
 - `plot_polygons(polygons, **kwargs)` - Plot multiple polygons
+- `plot_line(line, **kwargs)` - Plot a single line/polyline
+- `plot_lines(lines, **kwargs)` - Plot multiple lines/polylines
+- `plot_circle(lat, lon, radius, **kwargs)` - Plot a single circle
+- `plot_circles(lats, lons, radii, **kwargs)` - Plot multiple circles
+- `plot_geojson(geojson_data, **kwargs)` - Plot GeoJSON data
+- `plot_geojson_file(filepath, **kwargs)` - Plot GeoJSON from file
 - `random_color(rng=None)` - Generate a random color
 - `Context()` - Enhanced context for complex maps
+
+### GeoPandas Functions (Optional)
+
+- `plot_geodataframe(gdf, **kwargs)` - Plot GeoDataFrame
+- `plot_geometry(geometry, **kwargs)` - Plot Shapely geometry
+- `plot_geometries(geometries, **kwargs)` - Plot multiple geometries
 
 ### Color Options
 
