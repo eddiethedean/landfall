@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "landfall"
-version = "0.4.0"
+version = "0.4.1"
 description = "Easy to use functions to plot geospatial data on maps using staticmaps."
 readme = "README.md"
 license = {text = "MIT"}

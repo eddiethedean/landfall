@@ -1,4 +1,4 @@
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 # Apply compatibility patches first
 import landfall.compatibility  # noqa: F401
