@@ -2,9 +2,10 @@
 
 Reviewed on October 2, 2026. The annotated `v0.4.2` tag points to commit
 `23307420168a9d82b03cf9196e1b2adcdbfb240b` on `main`. The release-tag CI run
-completed successfully with all 31 jobs passing. This records the tagged,
-validated source; the GitHub Release and PyPI distributions have not yet been
-published, so the changelog keeps its `Unreleased` heading until publication.
+completed successfully with all 31 jobs passing. The source distribution and
+wheel were published to PyPI through Trusted Publishing on October 2, 2026.
+This review records the tag, CI result, and published artifacts; a GitHub
+Release page has not been created.
 
 ## Findings resolved
 
@@ -46,6 +47,7 @@ image was returned.
 | Notebook examples | All **45 code cells** across four notebooks passed offline |
 | Git whitespace/error check | Passed |
 | Hosted CI for tag `v0.4.2` | **31 jobs passed**; [workflow run](https://github.com/eddiethedean/landfall/actions/runs/37056795159) |
+| PyPI publication | **Passed**; sdist and wheel uploaded by [release workflow](https://github.com/eddiethedean/landfall/actions/runs/37061723829) |
 
 Python 3.9 was rerun with managed CPython 3.9.25 after the macOS system
 interpreter's LibreSSL triggered urllib3's OpenSSL warning. For the local
@@ -68,10 +70,8 @@ workarounds are not repository requirements.
 
 ## Remaining release steps
 
-1. Build and publish the validated source and wheel distributions to PyPI.
-2. Create the GitHub Release for the existing `v0.4.2` tag and include the
-   release notes.
-3. Replace the changelog's `Unreleased` label with the actual publication date.
+The package release is complete. Create a GitHub Release page for `v0.4.2` if
+you want release notes to appear in the GitHub Releases tab as well.
 
 Tests deliberately use offline tiles; live tile services were not exercised.
 Setuptools emits deprecation notices for the existing license-table/classifier
