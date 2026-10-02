@@ -8,6 +8,35 @@ render Pillow or SVG output. Examples and pictures are in
 [shapes and styling](shapes-and-styling.md) and
 [geospatial data](geospatial-data.md).
 
+<div class="lf-card-grid" markdown="1">
+<div class="lf-card" markdown="1">
+
+<p class="lf-card__title">Core plotting</p>
+
+Points, lines, polygons, and circles are available after `pip install landfall`.
+
+</div>
+<div class="lf-card" markdown="1">
+
+<p class="lf-card__title">GIS inputs</p>
+
+GeoJSON is built in. Shapely and GeoPandas functions use the `landfall[geo]`
+extra.
+
+</div>
+<div class="lf-card" markdown="1">
+
+<p class="lf-card__title">Combined maps</p>
+
+Use `Context` to layer different shape types and export Pillow or SVG output.
+
+</div>
+</div>
+
+!!! note "Function names are import-ready"
+    The table lists names from `landfall.*`, so you can call them directly
+    after `import landfall`.
+
 ## Choose a function
 
 | Function | Required input | Main options |

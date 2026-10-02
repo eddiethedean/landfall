@@ -2,6 +2,10 @@
 
 [Documentation index](README.md) · [API reference](api.md)
 
+Most plotting problems come down to one of three things: coordinate order,
+tile access, or an optional package installed into a different environment.
+Use this table to get from symptom to the next check quickly.
+
 | Symptom | What to check |
 | --- | --- |
 | The marker appears in the wrong place | Native pairs use `(latitude, longitude)`; GeoJSON and Shapely use `(longitude, latitude)`. Use `flip_coords=True` only for native inputs supplied longitude first. |

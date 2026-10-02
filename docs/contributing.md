@@ -21,6 +21,11 @@ ruff format --check src tests
 mypy src
 ```
 
+!!! tip "One command for the complete matrix"
+    `tox -p auto` runs the configured Python, geospatial, lint, typing, and
+    packaging environments in parallel. Install the matching interpreters
+    first if you want the full Python 3.8–3.13 matrix locally.
+
 The tests use an offline tile downloader. `tox` runs tests against installed
 wheels for Python 3.8–3.13 and has separate `geo`, `ruff`, `mypy`, and
 `package` environments. The `geo` environment enforces at least 85% total
@@ -53,6 +58,10 @@ python examples/generate_doc_maps.py
 Keep examples executable and include a screenshot when a new visual feature
 needs one. Preserve the tile attribution visible in generated images.
 Changes in behavior should include a regression test and a changelog entry.
+
+!!! info "Before changing a screenshot"
+    The documentation images use real OpenStreetMap tiles. Regenerate them
+    from the checked-in examples so the code and visual output stay aligned.
 
 ## Publish on Read the Docs
 

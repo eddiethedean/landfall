@@ -7,6 +7,11 @@ checked-in pictures were rendered with real tiles; run
 [`examples/generate_doc_maps.py`](https://github.com/eddiethedean/landfall/blob/main/examples/generate_doc_maps.py)
 to refresh them. Native coordinate pairs use `(latitude, longitude)`.
 
+!!! tip "Read the examples as a progression"
+    Start with one shape, then layer each object into the same `Context` when
+    you need a composed map. Each image below is a real output from the example
+    call beside it.
+
 ```python
 import landfall
 
@@ -65,6 +70,10 @@ image.save("polygon.png")
 
 ![A translucent blue polygon on a real map](images/polygon.png)
 
+!!! note "Make fills work over the map"
+    Use an RGBA hex color such as `#154e9e55` to keep streets and labels visible
+    beneath the polygon. The final two hex digits control opacity.
+
 ## Circles
 
 Radii are meters by default. Pass `radius_unit="kilometers"` if your radius
@@ -106,6 +115,9 @@ context.render_svg(*SIZE).saveas("layers.svg")
 
 ![Points, route, and polygon with a transparent hole on a real map](images/layers.png)
 
+The same shapes can be rendered as a Pillow image or exported as SVG. The
+polygon's interior ring stays transparent so the underlying map remains visible.
+
 `Context` also has `add_point`, `add_lines`, `add_polygons`, `add_circle`, and
 `add_circles` methods. Set a tile provider or zoom directly on the context
 using py-staticmaps methods.
@@ -132,6 +144,10 @@ order. An ID mapping takes precedence over `colors` when both are supplied.
 Batch polygons and circles also support `fill_colors`, `fill_same`,
 `fill_transparency`, and `id_fill_colors`. `fill_transparency` is an alpha
 byte from 0 (transparent) to 255 (opaque).
+
+!!! info "Group first, style second"
+    Use `ids` when objects share a meaningful category. A single ID-to-color
+    mapping keeps that category consistent even when the input order changes.
 
 For column-like point data, use `plot_points_data`:
 

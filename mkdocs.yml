@@ -9,9 +9,13 @@ theme:
   name: material
   features:
     - content.code.copy
+    - navigation.top
     - navigation.footer
     - navigation.sections
+    - navigation.tracking
     - search.suggest
+    - search.highlight
+    - toc.follow
   palette:
     - scheme: default
       toggle:
@@ -33,6 +37,11 @@ nav:
 
 markdown_extensions:
   - admonition
+  - attr_list
+  - md_in_html
   - toc:
       permalink: true
   - pymdownx.superfences
+
+extra_css:
+  - stylesheets/extra.css
