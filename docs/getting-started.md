@@ -13,6 +13,10 @@ Tile usage is subject to the provider's terms. To use another py-staticmaps
 provider, pass it as `tile_provider` to a plotting function or set it on a
 `Context`.
 
+!!! info "What you get"
+    Every `plot_*` call returns a Pillow image. Landfall handles the map
+    framing and tile composition; you decide what to draw and where to save it.
+
 ## Plot and save your first map
 
 ```python
@@ -38,6 +42,10 @@ supports. `window_size` is `(width, height)` in pixels and defaults to
 
 ## Coordinate order
 
+!!! warning "Native pairs start with latitude"
+    Landfall's native pair format is `(latitude, longitude)`. GeoJSON and
+    Shapely use the reverse order, `(longitude, latitude)`.
+
 | Input | Order | Example for Tampa |
 | --- | --- | --- |
 | Landfall coordinate pair | `(latitude, longitude)` | `(27.88, -82.49)` |
@@ -61,8 +69,29 @@ incorrect location, so check the order before plotting.
 
 ## Choose a workflow
 
-- Use [shapes and styling](shapes-and-styling.md) for routes, boundaries,
-  circles, colors, and maps with multiple layers.
-- Use [geospatial data](geospatial-data.md) for GeoJSON, Shapely, or
-  GeoPandas, including projected data.
-- Use the [API reference](api.md) when you need the exact function options.
+<div class="lf-card-grid" markdown="1">
+<div class="lf-card" markdown="1">
+
+<p class="lf-card__title">Draw shapes</p>
+
+Build routes, boundaries, circles, and multi-layer maps.
+
+[See shape examples →](shapes-and-styling.md)
+</div>
+<div class="lf-card" markdown="1">
+
+<p class="lf-card__title">Use existing GIS data</p>
+
+Plot GeoJSON, Shapely, or GeoPandas, including projected data.
+
+[Open the geospatial guide →](geospatial-data.md)
+</div>
+<div class="lf-card" markdown="1">
+
+<p class="lf-card__title">Find exact options</p>
+
+Compare public functions, shared arguments, and defaults.
+
+[Browse the API →](api.md)
+</div>
+</div>

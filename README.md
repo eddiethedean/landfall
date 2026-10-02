@@ -13,6 +13,13 @@ for map tiles and returns [Pillow](https://pillow.readthedocs.io/) images.
 
 ![Three points plotted on a real map of Tampa Bay](https://landfall.readthedocs.io/en/latest/images/points.png)
 
+<p align="center">
+  <a href="https://landfall.readthedocs.io/en/latest/shapes-and-styling/"><img src="https://landfall.readthedocs.io/en/latest/images/route.png" width="31%" alt="A styled route across Tampa Bay"></a>
+  <a href="https://landfall.readthedocs.io/en/latest/shapes-and-styling/"><img src="https://landfall.readthedocs.io/en/latest/images/polygon.png" width="31%" alt="A translucent polygon on a map"></a>
+  <a href="https://landfall.readthedocs.io/en/latest/shapes-and-styling/"><img src="https://landfall.readthedocs.io/en/latest/images/layers.png" width="31%" alt="A layered map with points, a route, and polygon"></a>
+</p>
+<p align="center"><sub>Routes · translucent areas · layered maps</sub></p>
+
 ## Install
 
 Landfall supports Python 3.8–3.13. Install the optional `geo` extra for

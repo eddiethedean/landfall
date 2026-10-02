@@ -13,6 +13,11 @@ These formats use **longitude, latitude** positions. Landfall converts them
 to its native latitude/longitude representation. A third altitude coordinate
 in GeoJSON is ignored for two-dimensional plotting.
 
+!!! tip "Choose the matching input"
+    Use `plot_geojson` for feature dictionaries or files, `plot_geometry` for a
+    single Shapely object, and `plot_geodataframe` when the data has columns,
+    styles, or a coordinate reference system.
+
 ## GeoJSON features and files
 
 ```python
@@ -55,6 +60,13 @@ accepts `fill` as a fallback when no stroke/color property is present.
 
 ## GeoDataFrames
 
+GeoPandas support is optional. Install the extra once in the same environment
+that runs your plotting code:
+
+```sh
+python -m pip install 'landfall[geo]'
+```
+
 ```python
 import geopandas as gpd
 from shapely.geometry import Point
@@ -88,6 +100,11 @@ when you want generated colors instead of a color column, or `colors="red"`
 to apply one literal color. Styling follows row order even if the frame index
 contains strings or duplicates. Null and empty geometries are skipped along
 with their corresponding styles.
+
+!!! warning "Set the CRS before plotting"
+    Reprojection is only possible when the selected geometry column has a
+    known CRS. Assign its true CRS before calling Landfall; data without a CRS
+    is treated as WGS84 longitude/latitude.
 
 ## Shapely geometries
 
