@@ -74,3 +74,17 @@ changes there before publishing `latest`. Alternatively, activate the
 `codex/release-0.4.2` branch as a separate version while reviewing it.
 If a different slug is required, update the hosted links and `site_url`
 before publishing.
+
+## Publish a package release
+
+The `Release` workflow builds and validates the sdist and wheel, then publishes
+them to PyPI with Trusted Publishing. Configure the PyPI publisher for this
+repository, the `.github/workflows/release.yml` workflow, and the GitHub
+environment `pypi`. A pushed stable version tag such as `v0.4.3` starts the
+workflow automatically; it stops before upload if the tag does not match the
+version in `pyproject.toml`.
+
+To publish a tag that was created before this workflow existed, run the
+`Release` workflow manually from the `main` branch and enter the existing tag.
+The workflow checks out that tag, verifies its version, builds the distributions,
+and only then requests the PyPI Trusted Publishing identity.
