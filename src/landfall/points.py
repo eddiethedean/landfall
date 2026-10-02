@@ -129,7 +129,11 @@ def points_to_lats_lons(
 ) -> Tuple[List[float], List[float]]:
     if len(points) == 0:
         return [], []
-    if any(not isinstance(point, (tuple, list)) or len(point) != 2 for point in points):
+    try:
+        invalid_pair = any(len(point) != 2 for point in points)
+    except TypeError as error:
+        raise ValueError("points must contain (latitude, longitude) pairs") from error
+    if invalid_pair:
         raise ValueError("points must contain (latitude, longitude) pairs")
     latitudes, longitudes = zip(*points)
     return list(latitudes), list(longitudes)
