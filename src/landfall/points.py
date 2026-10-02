@@ -7,14 +7,15 @@ from typing import Any, List, Mapping, Optional, Sequence, Tuple, Union
 import staticmaps
 from PIL.Image import Image
 
+from landfall.color import ColorInput, convert_color
 from landfall.plot import plot_colors, plot_zoom
-
+from landfall.validation import create_latlng
 
 tp = staticmaps.tile_provider_OSM
 
 
 def plot_points(
-    latitudes: Sequence[float],
+    latitudes: Union[Sequence[float], Sequence[Tuple[float, float]]],
     longitudes: Optional[Sequence[float]] = None,
     *,
     colors: Optional[Union[Sequence[Any], str]] = None,
@@ -24,7 +25,7 @@ def plot_points(
     point_size: int = 10,
     window_size: Tuple[int, int] = (500, 400),
     zoom: int = 0,
-    color: staticmaps.Color = staticmaps.color.BLUE,
+    color: ColorInput = staticmaps.color.BLUE,
     set_zoom: Optional[int] = None,
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
@@ -54,30 +55,31 @@ def plot_points(
 
 def add_points(
     context: staticmaps.Context,
-    latitudes: Sequence[float],
+    latitudes: Union[Sequence[float], Sequence[Tuple[float, float]]],
     longitudes: Optional[Sequence[float]] = None,
     *,
     colors: Optional[Union[Sequence[Any], str]] = None,
     ids: Optional[Sequence[Any]] = None,
     id_colors: Optional[Union[Mapping[Any, Any], str]] = None,
     point_size: int = 10,
-    color: staticmaps.Color = staticmaps.color.BLUE,
+    color: ColorInput = staticmaps.color.BLUE,
     flip_coords: bool = False,
 ) -> None:
+    if longitudes is None:
+        latitudes, longitudes = points_to_lats_lons(latitudes)  # type: ignore[arg-type]
+    if len(latitudes) != len(longitudes):
+        raise ValueError("latitudes and longitudes must have the same length")
     count = len(latitudes)
 
     colors = plot_colors(
         count=count, colors=colors, ids=ids, id_colors=id_colors, color=color
     )
 
-    if longitudes is None:
-        latitudes, longitudes = points_to_lats_lons(list(zip(latitudes, latitudes)))
-
     if flip_coords:
         latitudes, longitudes = longitudes, latitudes
 
     for lat, lon, clr in zip(latitudes, longitudes, colors):
-        add_point(context, lat, lon, clr, point_size)
+        add_point(context, lat, lon, clr, point_size)  # type: ignore[arg-type]
 
 
 def plot_points_data(
@@ -93,7 +95,7 @@ def plot_points_data(
     point_size: int = 10,
     window_size: Tuple[int, int] = (500, 400),
     zoom: int = 0,
-    color: staticmaps.Color = staticmaps.color.BLUE,
+    color: ColorInput = staticmaps.color.BLUE,
     set_zoom: Optional[int] = None,
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
@@ -125,6 +127,14 @@ def plot_points_data(
 def points_to_lats_lons(
     points: Sequence[Sequence[float]],
 ) -> Tuple[List[float], List[float]]:
+    if len(points) == 0:
+        return [], []
+    try:
+        invalid_pair = any(len(point) != 2 for point in points)
+    except TypeError as error:
+        raise ValueError("points must contain (latitude, longitude) pairs") from error
+    if invalid_pair:
+        raise ValueError("points must contain (latitude, longitude) pairs")
     latitudes, longitudes = zip(*points)
     return list(latitudes), list(longitudes)
 
@@ -138,9 +148,9 @@ def add_point(
     context: staticmaps.Context,
     lat: float,
     lon: float,
-    color: staticmaps.Color = staticmaps.color.BLUE,
+    color: ColorInput = staticmaps.color.BLUE,
     point_size: int = 10,
 ) -> None:
-    point = staticmaps.create_latlng(lat, lon)
-    marker = staticmaps.Marker(point, color=color, size=point_size)
+    point = create_latlng(lat, lon)
+    marker = staticmaps.Marker(point, color=convert_color(color), size=point_size)
     context.add_object(marker)

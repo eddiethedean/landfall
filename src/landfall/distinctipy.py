@@ -1,5 +1,5 @@
-from typing import List, Optional, Tuple
 import warnings
+from typing import List, Optional, Tuple
 
 import distinctipy
 

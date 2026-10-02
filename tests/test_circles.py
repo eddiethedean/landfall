@@ -6,7 +6,7 @@ import pytest
 from PIL import Image
 
 from landfall import plot_circle, plot_circles
-from landfall.circles import add_circles, add_circle
+from landfall.circles import add_circle, add_circles
 from tests.mock_tile_downloader import MockTileDownloader
 
 
@@ -210,13 +210,13 @@ class TestEdgeCases:
 
     def test_extreme_coordinates(self, mock_context):
         """Test handling extreme coordinates."""
-        with pytest.raises(ValueError, match="cannot convert float NaN to integer"):
+        with pytest.raises(ValueError, match="coordinates must be finite"):
             plot_circle(1000, -1000, 1000, context=mock_context)
 
     def test_negative_radius(self, mock_context):
         """Test circle with negative radius."""
-        img = plot_circle(0, 0, -1000, context=mock_context)
-        assert isinstance(img, Image.Image)
+        with pytest.raises(ValueError, match="radius must be finite and non-negative"):
+            plot_circle(0, 0, -1000, context=mock_context)
 
     def test_circle_width_zero(self, mock_context):
         """Test circle with zero border width."""

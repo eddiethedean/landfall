@@ -1,0 +1,81 @@
+# 0.4.2 release review
+
+Reviewed and prepared on October 2, 2026. Changes are on `codex/release-0.4.2`.
+The local release checks pass. Hosted Windows, Linux, and macOS CI must still
+pass before tagging and publishing; this review did not publish the release.
+
+## Findings resolved
+
+| Impact | Finding | Resolution and evidence |
+| --- | --- | --- |
+| High | Circles were 1,000 times too large | Convert meters to renderer kilometers; regression tests measure the actual WGS84 distance for both unit options. |
+| High | Batch lines/polygons flipped coordinates twice | Flip once in the singular helper; test asymmetric coordinates at real locations. |
+| High | Short color lists silently omitted shapes | Broadcast one color, validate other lengths; inspect counts for points, lines, polygons, circles, and multipart geometries. |
+| High | Polygon interior rings were filled as separate polygons | Preserve holes in Pillow, SVG, and Cairo; verify pixels, underlying objects, and SVG paths. |
+| High | GeoDataFrame indexes were treated as array positions | Use row order; test integer, string, duplicate indexes, and null rows. |
+| High | Projected CRS values were plotted as geographic coordinates | Reproject the selected geometry series to WGS84; test both active and alternate geometry columns. |
+| Medium | Point pairs were unpacked incorrectly | Handle coordinate pairs directly, including longitude-first input. |
+| Medium | Shapely MultiPoint and palette names failed | Use a shared geometry dispatcher and resolve palettes once per input. |
+| Medium | GeometryCollections were skipped and null properties crashed | Traverse nested collections and normalize null properties; accept altitude for 2D plots. |
+| Medium | Invalid inputs failed deep in rendering | Validate array lengths, colors, IDs, coordinate bounds, and finite non-negative radii with ValueError. |
+| Medium | Fully transparent fills were ignored | Check alpha against None, preserving zero. |
+| Medium | Random colors changed global state and repeated seeded colors | Use a local generator for each palette; preserve first-seen ID order. |
+| Medium | Importing Landfall patched Pillow globally | Require py-staticmaps 0.5.0+, which uses textbbox; leave compatibility helpers explicit and load GeoPandas only when used. |
+| Medium | CI skipped optional integrations and tested editable installs | Test wheels, optional extras, coverage, and distribution metadata; isolate coverage files per tox environment. |
+| Low | Documentation and notebooks used stale APIs and providers | Refresh README/changelog, replace obsolete tile endpoint and parameter, execute all notebook cells offline. |
+
+The baseline had **4 failing tests out of 202** when GeoPandas was installed.
+Several other defects passed the old suite because it checked only that an
+image was returned.
+
+## Validation
+
+| Check | Result |
+| --- | --- |
+| Complete suite, Python 3.11 with GeoPandas and Cairo | **292 passed**, **93.32% statement coverage** |
+| Installed-wheel core tests, Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13 | All six environments passed; 258 tests per environment, optional GeoPandas module and two Cairo cases skipped |
+| GeoPandas tests on Python 3.8, 3.9, 3.11, 3.13 | **290 passed**, 2 Cairo cases skipped; **90.57% coverage** |
+| Standard virtualenv/pip tox runner, Python 3.11 core and geo | Both passed |
+| Ruff lint and formatting | Passed |
+| mypy | Passed for all 16 source modules |
+| Build source distribution, then wheel from that source distribution | Passed |
+| Twine strict metadata validation | Both distributions passed |
+| Wheel contents | Includes all new modules, `py.typed`, and MIT license |
+| Notebook examples | All **45 code cells** across four notebooks passed offline |
+| Git whitespace/error check | Passed |
+
+Python 3.9 was rerun with managed CPython 3.9.25 after the macOS system
+interpreter's LibreSSL triggered urllib3's OpenSSL warning. For the local
+multi-version run, tox-uv avoided a copied-interpreter bootstrap problem with
+standalone Python. Standard tox was also verified independently. These local
+workarounds are not repository requirements.
+
+## Release behavior changes to communicate
+
+- Circle distances now match the documented units. Remove any manual factor-of-1,000
+  workaround in downstream code.
+- Mismatched color lists/arrays and invalid coordinates/radii now raise ValueError.
+  A single-item color list broadcasts to all input objects.
+- Entirely empty Shapely inputs raise ValueError. GeoDataFrames without a CRS
+  continue to assume longitude/latitude coordinates.
+- Optional plotting functions remain importable without GeoPandas and give an
+  installation hint when called without the extra.
+- The minimum renderer version is py-staticmaps 0.5.0. Python 3.8 development and
+  optional dependencies use compatible version markers.
+
+## Remaining release steps
+
+1. Run the updated hosted CI matrix. It includes core Python 3.8–3.13 on Windows,
+   Linux, and Intel macOS, optional geo tests on 3.8/3.9/3.13, and macOS ARM64
+   coverage on Python 3.13.
+2. Replace the changelog's `Unreleased` label with the actual release date.
+3. Commit, tag `v0.4.2`, and publish the validated distributions through the
+   maintainer's normal release process.
+
+Tests deliberately use offline tiles; live tile services were not exercised.
+Setuptools emits deprecation notices for the existing license-table/classifier
+format. Distribution metadata validates successfully; the format is retained
+for source-build compatibility with Python 3.8.
+
+Geometry behavior was checked against [GeoJSON RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946).
+Runner labels were checked against [GitHub's hosted runner documentation](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).

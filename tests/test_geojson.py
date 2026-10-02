@@ -3,11 +3,12 @@ Test GeoJSON plotting functionality.
 """
 
 import json
+
 import pytest
 from PIL import Image
 
 from landfall import plot_geojson, plot_geojson_file
-from landfall.geojson import parse_geojson, extract_geometries
+from landfall.geojson import extract_geometries, parse_geojson
 from tests.mock_tile_downloader import MockTileDownloader
 
 

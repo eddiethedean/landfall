@@ -1,5 +1,5 @@
-from typing import Any, List, Mapping, Optional, Sequence, Tuple, Union
 from itertools import repeat
+from typing import Any, List, Mapping, Optional, Sequence, Tuple, Union
 
 import staticmaps
 
@@ -13,6 +13,8 @@ def plot_colors(
     id_colors: Optional[Union[Mapping[Any, Any], str]] = None,
     color: Optional[staticmaps.Color] = None,
 ) -> List[staticmaps.Color]:
+    if ids is not None and len(ids) != count:
+        raise ValueError("ids must match the number of objects")
     if colors is not None:
         colors = process_colors(colors, count)
     else:
@@ -48,7 +50,7 @@ def plot_fill_colors(
     if ids is not None and id_fill_colors is not None:
         fill_colors = process_id_colors(ids, id_fill_colors)
 
-    if fill_transparency:
+    if fill_transparency is not None:
         fill_colors = [set_transparency(c, fill_transparency) for c in fill_colors]
     return fill_colors
 
