@@ -63,7 +63,7 @@ all = [
 Homepage = "https://github.com/eddiethedean/landfall"
 Repository = "https://github.com/eddiethedean/landfall"
 Issues = "https://github.com/eddiethedean/landfall/issues"
-Documentation = "https://github.com/eddiethedean/landfall#readme"
+Documentation = "https://landfall.readthedocs.io/en/latest/"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

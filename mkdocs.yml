@@ -1,0 +1,38 @@
+site_name: Landfall
+site_description: Plot geographic data on static maps with Python.
+site_url: !ENV [READTHEDOCS_CANONICAL_URL, "https://landfall.readthedocs.io/en/latest/"]
+repo_url: https://github.com/eddiethedean/landfall
+repo_name: eddiethedean/landfall
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.footer
+    - navigation.sections
+    - search.suggest
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+nav:
+  - Home: README.md
+  - Getting started: getting-started.md
+  - Shapes and styling: shapes-and-styling.md
+  - GeoJSON and GeoPandas: geospatial-data.md
+  - API reference: api.md
+  - Troubleshooting: troubleshooting.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences

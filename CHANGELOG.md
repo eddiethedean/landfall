@@ -42,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Development dependency markers preserve installation on Python 3.8.
 - Replace stale flake8 instructions with project-local Ruff configuration.
 - Refresh README examples and release documentation to match the public API.
+- Add a Read the Docs-ready MkDocs site with task-based guides, API reference,
+  strict CI build, executable examples, and maps rendered from real tiles.
 
 ## [0.4.1] - 2025-01-27
 
