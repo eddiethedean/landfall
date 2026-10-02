@@ -2,10 +2,10 @@ from typing import Any
 
 import staticmaps
 
-from landfall.points import add_points, add_point
-from landfall.polygons import add_polygons, add_polygon
-from landfall.lines import add_lines, add_line
-from landfall.circles import add_circles, add_circle
+from landfall.circles import add_circle, add_circles
+from landfall.lines import add_line, add_lines
+from landfall.points import add_point, add_points
+from landfall.polygons import add_polygon, add_polygons
 
 
 class Context(staticmaps.Context):

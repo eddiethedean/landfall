@@ -2,11 +2,15 @@
 Functions for plotting circles and buffers.
 """
 
+import math
 from typing import Any, Mapping, Optional, Sequence, Tuple, Union
+
 import staticmaps
 from PIL.Image import Image
 
+from landfall.color import ColorInput, convert_color
 from landfall.plot import plot_colors, plot_fill_colors, plot_zoom
+from landfall.validation import create_latlng
 
 tp = staticmaps.tile_provider_OSM
 TRED = staticmaps.Color(255, 0, 0, 100)
@@ -18,9 +22,9 @@ def plot_circles(
     longitudes: Sequence[float],
     radii: Sequence[float],
     *,
-    color: staticmaps.Color = RED,
+    color: ColorInput = RED,
     colors: Optional[Union[Sequence[Any], str]] = None,
-    fill_color: staticmaps.Color = TRED,
+    fill_color: ColorInput = TRED,
     fill_colors: Optional[Union[Sequence[Any], str]] = None,
     fill_same: Optional[bool] = None,
     fill_transparency: Optional[int] = None,
@@ -98,9 +102,9 @@ def add_circles(
     latitudes: Sequence[float],
     longitudes: Sequence[float],
     radii: Sequence[float],
-    color: staticmaps.Color = RED,
+    color: ColorInput = RED,
     colors: Optional[Union[Sequence[Any], str]] = None,
-    fill_color: staticmaps.Color = TRED,
+    fill_color: ColorInput = TRED,
     fill_colors: Optional[Union[Sequence[Any], str]] = None,
     fill_same: Optional[bool] = None,
     fill_transparency: Optional[int] = None,
@@ -131,6 +135,12 @@ def add_circles(
         width: Border width in pixels
         flip_coords: Whether coordinates are in (lon, lat) order
     """
+    if not (len(latitudes) == len(longitudes) == len(radii)):
+        raise ValueError("latitudes, longitudes, and radii must have the same length")
+    if radius_unit not in ("meters", "kilometers"):
+        raise ValueError("radius_unit must be 'meters' or 'kilometers'")
+    if any(not math.isfinite(radius) or radius < 0 for radius in radii):
+        raise ValueError("radius must be finite and non-negative")
     if flip_coords:
         latitudes, longitudes = longitudes, latitudes
 
@@ -162,8 +172,8 @@ def plot_circle(
     longitude: float,
     radius: float,
     tile_provider: Any = tp,
-    fill_color: staticmaps.Color = TRED,
-    color: staticmaps.Color = RED,
+    fill_color: ColorInput = TRED,
+    color: ColorInput = RED,
     width: int = 2,
     radius_unit: str = "meters",
     window_size: Tuple[int, int] = (500, 400),
@@ -215,9 +225,9 @@ def add_circle(
     latitude: float,
     longitude: float,
     radius: float,
-    color: staticmaps.Color,
-    fill_color: staticmaps.Color,
-    width: int,
+    color: ColorInput = RED,
+    fill_color: ColorInput = TRED,
+    width: int = 2,
     radius_unit: str = "meters",
 ) -> None:
     """Add a single circle to a staticmaps context.
@@ -232,20 +242,22 @@ def add_circle(
         width: Border width in pixels
         radius_unit: Unit for radius ('meters' or 'kilometers')
     """
-    # Convert radius to meters if needed
+    if not math.isfinite(radius) or radius < 0:
+        raise ValueError("radius must be finite and non-negative")
+    # staticmaps.Circle accepts kilometers.
     if radius_unit == "kilometers":
-        radius_meters = radius * 1000
+        radius_km = radius
     elif radius_unit == "meters":
-        radius_meters = radius
+        radius_km = radius / 1000
     else:
         raise ValueError("radius_unit must be 'meters' or 'kilometers'")
 
-    center = staticmaps.create_latlng(latitude, longitude)
+    center = create_latlng(latitude, longitude)
     circle = staticmaps.Circle(
         center,
-        radius_meters,
-        color=color,
-        fill_color=fill_color,
+        radius_km,
+        color=convert_color(color),
+        fill_color=convert_color(fill_color),
         width=width,
     )
     context.add_object(circle)

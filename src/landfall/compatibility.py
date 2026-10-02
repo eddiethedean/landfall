@@ -2,7 +2,11 @@
 Compatibility fixes for py-staticmaps with newer Pillow versions.
 
 This module provides patches for compatibility issues between py-staticmaps
-and newer versions of Pillow (11.0+) where textsize was removed.
+and newer versions of Pillow (10.0+) where textsize was removed.
+
+Current Landfall requires py-staticmaps 0.5.0 or newer, which supports textbbox
+directly. These helpers remain available for legacy callers and are only
+applied when explicitly requested.
 """
 
 import warnings
@@ -20,7 +24,7 @@ def patch_textsize_compatibility() -> None:
     """
     Patch ImageDraw.textsize method for compatibility with newer Pillow versions.
 
-    In Pillow 11.0+, textsize was removed and replaced with textbbox.
+    In Pillow 10.0+, textsize was removed and replaced with textbbox.
     This function adds a textsize method that uses textbbox internally.
     """
     if not PILLOW_AVAILABLE:
@@ -72,8 +76,3 @@ def patch_textsize_compatibility() -> None:
 def apply_compatibility_patches() -> None:
     """Apply all compatibility patches."""
     patch_textsize_compatibility()
-
-
-# Auto-apply patches when module is imported
-if PILLOW_AVAILABLE:
-    apply_compatibility_patches()

@@ -5,9 +5,9 @@ Test plotting functionality.
 import pytest
 from PIL import Image
 
-from landfall import plot_points, plot_points_data, plot_polygons, plot_polygon
-from landfall.points import add_points, add_point
-from landfall.polygons import add_polygons, add_polygon
+from landfall import plot_points, plot_points_data, plot_polygon, plot_polygons
+from landfall.points import add_point, add_points
+from landfall.polygons import add_polygon, add_polygons
 from tests.mock_tile_downloader import MockTileDownloader
 
 
@@ -182,7 +182,7 @@ class TestEdgeCases:
 
     def test_extreme_coordinates(self, mock_context):
         """Test handling extreme coordinates."""
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError, match="coordinates must be finite"):
             plot_points([1000, -1000], [1000, -1000], context=mock_context)
 
     def test_single_point(self, mock_context):

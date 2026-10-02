@@ -1,10 +1,10 @@
 from typing import Any, Sequence, Tuple
 
 from PIL.Image import Image
-from staticmaps import Color, Context, RED, tile_provider_OSM
+from staticmaps import RED, Color, Context, tile_provider_OSM
 
-from landfall.polygons import add_polygons, flip_polygon_coords
 from landfall.points import add_point
+from landfall.polygons import add_polygons, flip_polygon_coords
 
 tp = tile_provider_OSM
 TRED = Color(255, 0, 0, 100)
@@ -27,5 +27,7 @@ def plot_points_and_polygons(
         polygons = [flip_polygon_coords(polygon) for polygon in polygons]
     add_polygons(context, polygons, fill_color=fill_color, width=width, color=color)
     for lat, lon in points:
+        if flip_coords:
+            lat, lon = lon, lat
         add_point(context, lat, lon, color, point_size)
     return context.render_pillow(*size)  # type: ignore

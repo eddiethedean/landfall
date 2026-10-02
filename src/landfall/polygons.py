@@ -3,10 +3,14 @@ Functions for plotting polygons.
 """
 
 from typing import Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
+
 import staticmaps
 from PIL.Image import Image
 
+from landfall.area import PolygonArea
+from landfall.color import ColorInput, convert_color
 from landfall.plot import plot_colors, plot_fill_colors
+from landfall.validation import create_latlng
 
 tp = staticmaps.tile_provider_OSM
 TRED = staticmaps.Color(255, 0, 0, 100)
@@ -14,7 +18,7 @@ RED = staticmaps.RED
 
 
 def create_polygon_points(polygon: Iterable[Tuple[float, float]]) -> List[Any]:
-    return [staticmaps.create_latlng(lat, lon) for lat, lon in polygon]
+    return [create_latlng(lat, lon) for lat, lon in polygon]
 
 
 def flip_polygon_coords(
@@ -26,12 +30,12 @@ def flip_polygon_coords(
 def plot_polygons(
     polygons: Sequence[Sequence[Tuple[float, float]]],
     *,
-    color: staticmaps.Color = RED,
+    color: ColorInput = RED,
     colors: Optional[Union[Sequence[Any], str]] = None,
     fill_same: Optional[bool] = None,
     fill_transparency: Optional[int] = None,
     fill_colors: Optional[Union[Sequence[Any], str]] = None,
-    fill_color: staticmaps.Color = TRED,
+    fill_color: ColorInput = TRED,
     ids: Optional[Sequence[Any]] = None,
     id_colors: Optional[Union[Mapping[Any, Any], str]] = None,
     id_fill_colors: Optional[Union[Mapping[Any, Any], str]] = None,
@@ -68,21 +72,18 @@ def plot_polygons(
 def add_polygons(
     context: staticmaps.Context,
     polygons: Sequence[Sequence[Tuple[float, float]]],
-    color: staticmaps.Color = RED,
+    color: ColorInput = RED,
     colors: Optional[Union[Sequence[Any], str]] = None,
     fill_same: Optional[bool] = None,
     fill_transparency: Optional[int] = None,
     fill_colors: Optional[Union[Sequence[Any], str]] = None,
-    fill_color: staticmaps.Color = TRED,
+    fill_color: ColorInput = TRED,
     ids: Optional[Sequence[Any]] = None,
     id_colors: Optional[Union[Mapping[Any, Any], str]] = None,
     id_fill_colors: Optional[Union[Mapping[Any, Any], str]] = None,
     width: int = 2,
     flip_coords: bool = False,
 ) -> None:
-    if flip_coords:
-        polygons = [flip_polygon_coords(polygon) for polygon in polygons]
-
     count = len(polygons)
 
     colors = plot_colors(
@@ -107,8 +108,8 @@ def add_polygons(
 def plot_polygon(
     polygon: Sequence[Tuple[float, float]],
     tile_provider: Any = tp,
-    fill_color: staticmaps.Color = TRED,
-    color: staticmaps.Color = RED,
+    fill_color: ColorInput = TRED,
+    color: ColorInput = RED,
     width: int = 2,
     window_size: Tuple[int, int] = (500, 400),
     flip_coords: bool = False,
@@ -130,18 +131,28 @@ def plot_polygon(
 def add_polygon(
     context: staticmaps.Context,
     polygon: Sequence[Tuple[float, float]],
-    fill_color: staticmaps.Color,
-    width: int,
-    color: staticmaps.Color,
+    fill_color: ColorInput = TRED,
+    width: int = 2,
+    color: ColorInput = RED,
     flip_coords: bool = False,
+    *,
+    holes: Optional[Sequence[Sequence[Tuple[float, float]]]] = None,
 ) -> None:
     if flip_coords:
         polygon = flip_polygon_coords(polygon)
+        if holes is not None:
+            holes = [flip_polygon_coords(hole) for hole in holes]
+    rings = [list(polygon)] + [list(hole) for hole in holes or []]
+    for ring in rings:
+        if len(ring) < 3:
+            raise ValueError("Trying to create area with less than 3 coordinates")
+        if ring[0] != ring[-1]:
+            ring.append(ring[0])
     context.add_object(
-        staticmaps.Area(
-            create_polygon_points(polygon),
-            fill_color=fill_color,
+        PolygonArea(
+            [create_polygon_points(ring) for ring in rings],
+            fill_color=convert_color(fill_color),
             width=width,
-            color=color,
+            color=convert_color(color),
         )
     )

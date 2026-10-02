@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - Unreleased
+
+### Fixed
+- Circle radii now convert meters to the kilometers expected by py-staticmaps;
+  a 1,000-meter radius no longer produces a 1,000-kilometer circle.
+- Batch lines and polygons flip longitude/latitude coordinates exactly once.
+- Point coordinate pairs are unpacked correctly when longitudes are omitted.
+- Single-item color lists apply to all shapes instead of silently dropping data.
+- Multipart GeoJSON and Shapely geometries retain every component.
+- Polygon holes preserve the background and underlying objects in Pillow, SVG,
+  and Cairo; native polygons close the final boundary edge.
+- GeoDataFrame styling follows row position rather than index labels and respects
+  the selected geometry column's CRS, reprojecting to WGS84 when available.
+- GeoDataFrame palette names and missing geometry columns now behave consistently.
+- A fill alpha of zero remains fully transparent.
+- Seeded random palettes generate a sequence of colors without changing global
+  random state; ID palettes follow first appearance rather than set order.
+- Singular Context geometry methods accept documented default styling and color names.
+
+### Added
+- Nested GeoJSON/Shapely GeometryCollection support, null Feature properties,
+  and GeoJSON positions with altitude (ignored for two-dimensional plotting).
+- Validation for mismatched coordinates, radii, colors, IDs, invalid coordinates,
+  and non-finite or negative circle radii. These now raise ValueError.
+- Regression tests checking object counts, actual coordinates, geodesic radius,
+  styling, reprojection, and transparent holes in rendered images.
+- Optional integration CI across platforms, installed-wheel tests, coverage floor,
+  and source/wheel metadata validation with downloadable build artifacts.
+
+### Changed
+- Require py-staticmaps >=0.5.0 for native support of current Pillow APIs.
+- Importing Landfall no longer patches Pillow globally or imports GeoPandas eagerly.
+- Optional plotting APIs remain available without the geo extra and raise a helpful
+  ImportError when called without it. Entirely empty Shapely inputs raise ValueError.
+- Development dependency markers preserve installation on Python 3.8.
+- Replace stale flake8 instructions with project-local Ruff configuration.
+- Refresh README examples and release documentation to match the public API.
+
 ## [0.4.1] - 2025-01-27
 
 ### Fixed

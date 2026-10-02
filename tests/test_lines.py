@@ -6,7 +6,7 @@ import pytest
 from PIL import Image
 
 from landfall import plot_line, plot_lines
-from landfall.lines import add_lines, add_line
+from landfall.lines import add_line, add_lines
 from tests.mock_tile_downloader import MockTileDownloader
 
 
@@ -159,7 +159,7 @@ class TestEdgeCases:
 
     def test_extreme_coordinates(self, mock_context):
         """Test handling extreme coordinates."""
-        with pytest.raises(ZeroDivisionError):
+        with pytest.raises(ValueError, match="coordinates must be finite"):
             plot_line([(1000, -1000), (1000, -1000)], context=mock_context)
 
     def test_line_width_zero(self, mock_context):

@@ -11,29 +11,28 @@ import staticmaps
 from PIL import Image
 
 from landfall import (
+    Context,
     plot_points,
     plot_points_data,
-    plot_polygons,
     plot_polygon,
+    plot_polygons,
     random_color,
-    Context,
 )
 from landfall.color import (
-    process_colors,
     convert_color,
-    process_id_colors,
     map_id_colors,
+    process_colors,
+    process_id_colors,
 )
-from landfall.distinctipy import get_distinct_colors, get_distict_colors
-from landfall.colorsys import hsvt_to_rgb, get_wheel_colors
-from landfall.points import add_points, add_point, points_to_lats_lons
+from landfall.colorsys import get_wheel_colors, hsvt_to_rgb
+from landfall.distinctipy import get_distict_colors, get_distinct_colors
+from landfall.points import add_point, add_points, points_to_lats_lons
 from landfall.polygons import (
+    add_polygon,
+    add_polygons,
     create_polygon_points,
     flip_polygon_coords,
-    add_polygons,
-    add_polygon,
 )
-
 from tests.mock_tile_downloader import MockTileDownloader
 
 
@@ -404,7 +403,7 @@ class TestErrorHandling:
     def test_invalid_coordinates(self, mock_context):
         """Test handling invalid coordinates."""
         # Should raise error with invalid coordinates
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError, match="coordinates must be finite"):
             plot_points([1000, -1000], [1000, -1000], context=mock_context)
 
 

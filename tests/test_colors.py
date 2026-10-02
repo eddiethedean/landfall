@@ -7,9 +7,9 @@ import warnings
 import pytest
 import staticmaps
 
-from landfall.color import process_colors, convert_color
-from landfall.distinctipy import get_distinct_colors, get_distict_colors
-from landfall.colorsys import hsvt_to_rgb, get_wheel_colors
+from landfall.color import convert_color, process_colors
+from landfall.colorsys import get_wheel_colors, hsvt_to_rgb
+from landfall.distinctipy import get_distict_colors, get_distinct_colors
 
 
 class TestColorBugFix:

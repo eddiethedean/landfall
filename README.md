@@ -1,369 +1,214 @@
 ![Landfall Logo](https://raw.githubusercontent.com/eddiethedean/landfall/main/docs/landfall_logo.png)
------------------
 
-# Landfall: Easy to use functions for plotting geographic data on static maps
-[![PyPI Latest Release](https://img.shields.io/pypi/v/landfall.svg)](https://pypi.org/project/landfall/)
-![Tests](https://github.com/eddiethedean/landfall/actions/workflows/tests.yml/badge.svg)
-[![Python Support](https://img.shields.io/pypi/pyversions/landfall.svg)](https://pypi.org/project/landfall/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# Landfall
 
-## What is it?
+[![PyPI](https://img.shields.io/pypi/v/landfall.svg)](https://pypi.org/project/landfall/)
+[![Tests](https://github.com/eddiethedean/landfall/actions/workflows/tests.yml/badge.svg)](https://github.com/eddiethedean/landfall/actions/workflows/tests.yml)
+[![Python](https://img.shields.io/pypi/pyversions/landfall.svg)](https://pypi.org/project/landfall/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Landfall** is a modern, well-tested Python package with easy-to-use functions for plotting geographic data on static maps. Built with type safety, comprehensive testing, and cross-platform compatibility in mind.
+Plot geographic data on static maps with a small Python API. Landfall wraps
+[py-staticmaps](https://github.com/flopp/py-staticmaps) and returns Pillow images
+that you can save, display in a notebook, or use in a report.
 
-## ✨ Features
+- Plot points, lines, polygons, and circles.
+- Generate distinct, random, or color-wheel palettes, with optional ID grouping.
+- Read GeoJSON features and geometry collections, including multipart shapes and polygon holes.
+- Plot Shapely geometries and GeoDataFrames with the optional `geo` extra.
+- Combine shapes with `Context` and render with Pillow or SVG.
 
-- 🗺️ **Easy geospatial plotting** - Plot points, polygons, lines, and circles on static maps
-- 🎨 **Smart color generation** - Automatic distinct color generation for data visualization
-- 📍 **GeoJSON support** - Plot industry-standard GeoJSON data directly
-- 🐼 **GeoPandas integration** - Optional integration with GeoDataFrames and Shapely geometries
-- 🔧 **Type-safe** - Full type annotations with mypy support
-- 🧪 **Well-tested** - 182+ tests with comprehensive coverage across Python 3.8-3.13
-- 🚀 **Modern packaging** - Built with modern `pyproject.toml` standards
-- 🔄 **Cross-platform** - Works on Windows, macOS, and Linux
-- 📦 **Minimal dependencies** - Only essential packages required
+## Install
 
-## 🆕 What's New in v0.4.0
+Requires Python 3.8 or newer. The release test matrix covers Python 3.8–3.13
+on Linux, Windows, and macOS, plus current macOS ARM64 on Python 3.13.
 
-**Major feature expansion with 4 new plotting capabilities:**
-
-- 🛣️ **Line/Polyline Plotting** - Plot routes, paths, and linear features with `plot_line()` and `plot_lines()`
-- ⭕ **Circle/Buffer Plotting** - Create coverage areas and buffer zones with `plot_circle()` and `plot_circles()`
-- 📄 **GeoJSON Support** - Plot industry-standard GeoJSON data directly with `plot_geojson()` and `plot_geojson_file()`
-- 🐼 **GeoPandas Integration** - Optional GeoDataFrame support with `plot_geodataframe()`, `plot_geometry()`, and `plot_geometries()`
-
-**Plus enhanced Context class with new methods:**
-- `add_line()`, `add_lines()` - Add lines to existing maps
-- `add_circle()`, `add_circles()` - Add circles to existing maps
-
-**Installation for GeoPandas support:**
-```bash
-pip install landfall[geo]
-```
-
-## Requirements
-
-- **Python 3.8-3.13** (comprehensive version support)
-- **Pillow >=10.0.0** (image processing)
-- **py-staticmaps** (map rendering)
-- **distinctipy** (color generation)
-
-## Installation
-
-### From PyPI
 ```sh
 pip install landfall
+# Optional GeoPandas and Shapely support
+pip install 'landfall[geo]'
 ```
 
-### Development Installation
-```sh
-pip install -e .[dev]
-```
+Map tiles use OpenStreetMap by default and require network access. You can
+supply another py-staticmaps tile provider or configure a context for offline
+rendering.
 
-### With GeoPandas Support
-```sh
-pip install landfall[geo]
-```
+## Quick start
 
-This installs the package in editable mode with development dependencies including:
-- `pytest` - Testing framework
-- `pytest-cov` - Coverage reporting
-- `mypy` - Type checking
-- `flake8` - Linting
-- `tox` - Multi-environment testing
-
-**GeoPandas extras include:**
-- `geopandas>=0.14.0` - GeoDataFrame support
-- `shapely>=2.0.0` - Geometry operations
-
-## Quick Start
-
-### Basic Point Plotting
 ```python
 import landfall
 
-# Plot points on a map
-lats = [27.88, 27.92, 27.94]
-lons = [-82.49, -82.49, -82.46]
-
-landfall.plot_points(lats, lons)
+image = landfall.plot_points(
+    [27.88, 27.92, 27.94],
+    [-82.49, -82.46, -82.44],
+    colors="distinct",
+    window_size=(800, 600),
+)
+image.save("points.png")
 ```
 
-### Advanced Plotting with Colors
+Landfall's coordinate pairs use **(latitude, longitude)**. GeoJSON and Shapely
+use **(longitude, latitude)** and are converted automatically. For native
+functions receiving longitude first, set `flip_coords=True`.
+
 ```python
-import landfall
+# Coordinate pairs are also accepted by plot_points.
+image = landfall.plot_points([(27.88, -82.49), (27.92, -82.46)])
 
-# Plot points with distinct colors
-lats = [27.88, 27.92, 27.94, 27.96]
-lons = [-82.49, -82.49, -82.46, -82.44]
+route = [(27.88, -82.49), (27.92, -82.46), (27.94, -82.44)]
+image = landfall.plot_line(route, color="red", width=3)
 
-# Use distinct colors for each point
-landfall.plot_points(lats, lons, colors="distinct")
+polygon = [(27.88, -82.49), (27.92, -82.49), (27.92, -82.44), (27.88, -82.44)]
+image = landfall.plot_polygon(polygon, color="red", fill_color="#0000ff64")
 
-# Or use custom colors
-landfall.plot_points(lats, lons, colors=["red", "blue", "green", "yellow"])
+# Radius is in meters by default; this is a one-kilometer circle.
+image = landfall.plot_circle(27.88, -82.49, 1000, fill_color="#0000ff64")
 ```
 
-### Polygon Plotting
+## Colors and grouped data
+
+For batch functions, `colors` accepts `"distinct"`, `"random"`, `"wheel"`, or a
+list of color names, hex strings, RGB/RGBA tuples, or `staticmaps.Color` objects.
+A single-item list applies to every shape. Otherwise, provide one color per
+shape; mismatched lists raise `ValueError` instead of omitting data.
+
 ```python
-import landfall
-
-# Define polygon coordinates
-polygon = [
-    (27.88, -82.49),
-    (27.92, -82.49), 
-    (27.94, -82.46),
-    (27.88, -82.46)
-]
-
-# Plot polygon with fill
-landfall.plot_polygon(polygon, fill_color="blue", color="red")
+image = landfall.plot_points(
+    [27.88, 27.92, 27.94], [-82.49, -82.46, -82.44],
+    ids=["north", "south", "north"],
+    id_colors={"north": "blue", "south": "red"},
+)
 ```
 
-### Using the Enhanced Context
-```python
-import landfall
+Polygons and circles also accept `fill_colors`, `fill_same=True`, and
+`fill_transparency` (alpha from 0 for transparent to 255 for opaque).
+Coordinate arrays, IDs, and radius arrays must have matching lengths.
+Coordinates must be finite and within latitude −90..90 and longitude −180..180;
+radii must be finite and non-negative.
 
-# Create a context for complex maps
+## Combine shapes
+
+```python
 context = landfall.Context()
-
-# Add multiple elements
 context.add_points([27.88, 27.92], [-82.49, -82.46], colors="distinct")
-context.add_polygon(polygon, fill_color="blue", color="red", width=2)
-
-# Render the map
-image = context.render_pillow(800, 600)
+context.add_line([(27.88, -82.49), (27.92, -82.46)], color="red", width=2)
+context.add_polygon(
+    [(27.88, -82.49), (27.92, -82.49), (27.92, -82.44), (27.88, -82.44)],
+    fill_color="#0000ff64",
+)
+context.add_circles([27.88], [-82.49], [1000], fill_color="yellow")
+context.render_pillow(800, 600).save("combined.png")
+context.render_svg(800, 600).saveas("combined.svg")
 ```
 
-### Line Plotting
+`Context` supports singular and plural `add_point`, `add_line`, `add_polygon`,
+and `add_circle` methods. Native polygons close their last edge automatically.
+`Context.add_polygon(..., holes=[...])` accepts interior rings.
+
+## GeoJSON
+
 ```python
-import landfall
-
-# Plot lines/routes on a map
-lines = [
-    [(27.88, -82.49), (27.92, -82.46), (27.94, -82.44)],  # Route 1
-    [(27.90, -82.50), (27.95, -82.45), (27.98, -82.42)]   # Route 2
-]
-
-# Plot multiple lines with distinct colors
-landfall.plot_lines(lines, colors="distinct", width=3)
-
-# Plot single line
-line = [(27.88, -82.49), (27.92, -82.46), (27.94, -82.44)]
-landfall.plot_line(line, color="red", width=2)
-```
-
-### Circle/Buffer Plotting
-```python
-import landfall
-
-# Plot circles for coverage areas
-lats = [27.88, 27.92, 27.94]
-lons = [-82.49, -82.46, -82.44]
-radii = [1000, 2000, 1500]  # meters
-
-# Plot circles with fill colors
-landfall.plot_circles(lats, lons, radii, 
-                     fill_colors="distinct", 
-                     radius_unit="meters")
-
-# Plot single circle
-landfall.plot_circle(27.88, -82.49, 1000, 
-                    fill_color="blue", 
-                    color="red", 
-                    radius_unit="meters")
-```
-
-### GeoJSON Support
-```python
-import landfall
-
-# Plot GeoJSON data directly
-geojson_data = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [-82.49, 27.88]
-            },
-            "properties": {
-                "name": "Location 1",
-                "marker-color": "red"
-            }
-        }
-    ]
+feature = {
+    "type": "Feature",
+    "geometry": {"type": "Point", "coordinates": [-82.49, 27.88]},
+    "properties": {"marker-color": "red", "marker-size": 12},
 }
-
-# Plot GeoJSON from dict
-landfall.plot_geojson(geojson_data)
-
-# Plot GeoJSON from file
-landfall.plot_geojson_file("data.geojson")
+image = landfall.plot_geojson(feature)
+# Or read a UTF-8 GeoJSON file:
+# image = landfall.plot_geojson_file("data.geojson")
 ```
 
-### GeoPandas Integration (Optional)
+GeoJSON can be a dictionary or JSON string. Point, MultiPoint, LineString,
+MultiLineString, Polygon, MultiPolygon, and nested GeometryCollection objects
+are supported, along with Feature and FeatureCollection wrappers. Null
+geometries are skipped and null properties are accepted. Altitude is ignored
+when plotting positions. Empty input with no geometries raises `ValueError`.
+Styling supports `stroke`, `stroke-width`, `fill`, `fill-opacity`,
+`marker-color`, and `marker-size`.
+
+## GeoPandas and Shapely
+
 ```python
-import landfall
 import geopandas as gpd
 from shapely.geometry import Point
 
-# Create GeoDataFrame
-data = {'name': ['A', 'B', 'C'], 'value': [10, 20, 30]}
-geometry = [Point(-82.49, 27.88), Point(-82.46, 27.92), Point(-82.44, 27.96)]
-gdf = gpd.GeoDataFrame(data, geometry=geometry)
-
-# Plot GeoDataFrame directly
-landfall.plot_geodataframe(gdf, color_column="value")
-
-# Plot individual Shapely geometries
-point = Point(-82.49, 27.88)
-landfall.plot_geometry(point)
+frame = gpd.GeoDataFrame(
+    {"color": ["red", "blue"], "size": [10, 15]},
+    geometry=[Point(-82.49, 27.88), Point(-82.46, 27.92)],
+    crs="EPSG:4326",
+    index=["A", "B"],
+)
+image = landfall.plot_geodataframe(frame, color_column="color", size_column="size")
+image = landfall.plot_geometries(list(frame.geometry), colors="distinct")
+image = landfall.plot_geometry(frame.geometry.iloc[0])
 ```
 
-### Using the Enhanced Context
-```python
-import landfall
+GeoDataFrames with a CRS are reprojected to WGS84 automatically, including
+when selecting another `geometry_column`. A frame without a CRS is assumed
+to contain longitude/latitude values. Raw Shapely geometries must already
+use WGS84 coordinates. `color_column` contains color names or hex values;
+use `colors="distinct"` to generate a palette. Styling follows row order,
+including duplicate or string index labels. Null and empty geometries are
+skipped; an entirely empty input raises `ValueError`.
 
-# Create a context for complex maps
-context = landfall.Context()
+## API
 
-# Add multiple elements
-context.add_points([27.88, 27.92], [-82.49, -82.46], colors="distinct")
-context.add_polygon(polygon, fill_color="blue", color="red", width=2)
-context.add_lines(lines, colors="random", width=2)
-context.add_circles([27.88], [-82.49], [1000], fill_color="yellow")
+| Function | Input |
+| --- | --- |
+| `plot_points` | Latitude/longitude arrays or coordinate pairs |
+| `plot_points_data` | Mapping with named latitude/longitude columns |
+| `plot_line`, `plot_lines` | One route or a sequence of routes |
+| `plot_polygon`, `plot_polygons` | One polygon or a sequence of polygons |
+| `plot_circle`, `plot_circles` | Center coordinates and radius/radii |
+| `plot_geojson`, `plot_geojson_file` | GeoJSON data or a file path |
+| `plot_geometry`, `plot_geometries` | Shapely geometry/geometries; requires `geo` |
+| `plot_geodataframe` | GeoDataFrame; requires `geo` |
+| `random_color(rng=None)` | Optional seed; leaves global random state unchanged |
+| `Context` | Add shapes and configure rendering |
 
-# Render the map
-image = context.render_pillow(800, 600)
-```
+Plotting functions return `PIL.Image.Image`. They accept `window_size`,
+`tile_provider`, and an optional existing `context`. Points, lines, circles,
+GeoJSON, and GeoPandas functions also accept `zoom` (an adjustment) and
+`set_zoom` (an explicit override).
 
-## API Reference
+## What's changed in 0.4.2
 
-### Core Functions
+- Correct circle radii: 1,000 meters now renders as one kilometer.
+- Correct coordinate flipping for batch lines and polygons.
+- Preserve every part of multipart geometries and transparent polygon holes.
+- Support nested geometry collections, null properties, and positions with altitude.
+- Fix GeoDataFrame indexes, palettes, selected geometry columns, and projected CRS handling.
+- Reject mismatched arrays and invalid coordinates with clear errors.
+- Preserve fully transparent fills and avoid modifying global random state or Pillow on import.
+- Exercise optional dependencies and validate release distributions in CI.
 
-- `plot_points(lats, lons, **kwargs)` - Plot points on a map
-- `plot_polygon(polygon, **kwargs)` - Plot a single polygon
-- `plot_polygons(polygons, **kwargs)` - Plot multiple polygons
-- `plot_line(line, **kwargs)` - Plot a single line/polyline
-- `plot_lines(lines, **kwargs)` - Plot multiple lines/polylines
-- `plot_circle(lat, lon, radius, **kwargs)` - Plot a single circle
-- `plot_circles(lats, lons, radii, **kwargs)` - Plot multiple circles
-- `plot_geojson(geojson_data, **kwargs)` - Plot GeoJSON data
-- `plot_geojson_file(filepath, **kwargs)` - Plot GeoJSON from file
-- `random_color(rng=None)` - Generate a random color
-- `Context()` - Enhanced context for complex maps
-
-### GeoPandas Functions (Optional)
-
-- `plot_geodataframe(gdf, **kwargs)` - Plot GeoDataFrame
-- `plot_geometry(geometry, **kwargs)` - Plot Shapely geometry
-- `plot_geometries(geometries, **kwargs)` - Plot multiple geometries
-
-### Color Options
-
-- `"random"` - Generate random colors
-- `"distinct"` - Generate visually distinct colors
-- `"wheel"` - Generate colors from HSV color wheel
-- Custom color list: `["red", "blue", "green"]`
-- RGB tuples: `[(255, 0, 0), (0, 255, 0)]`
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## Development
 
-### Setup Development Environment
 ```sh
 git clone https://github.com/eddiethedean/landfall.git
 cd landfall
-pip install -e .[dev]
-```
-
-### Running Tests
-```sh
-# Run all tests
+python -m venv .venv
+# Activate the environment, then:
+pip install -e '.[dev,geo]'
 pytest
-
-# Run with coverage
-pytest --cov=landfall
-
-# Run specific test categories
-pytest tests/test_colors.py      # Color-related tests
-pytest tests/test_plotting.py    # Plotting tests
-pytest tests/test_comprehensive.py  # Comprehensive tests
-
-# Run tests excluding slow tests
-pytest -m "not slow"
-
-# Run tests across all Python versions
-tox
-```
-
-### Code Quality
-```sh
-# Linting
-flake8 src tests
-
-# Type checking
+ruff check src tests
+ruff format --check src tests
 mypy src
 
-# Formatting
-ruff format src tests
-
-# All quality checks
-tox -e flake8,mypy
+# Core tests across Python 3.8–3.13 (requires those interpreters):
+tox -e py38,py39,py310,py311,py312,py313
+# Optional integrations, quality checks, and release packaging:
+tox -e geo,ruff,mypy,package
 ```
 
-### Multi-Version Testing
-```sh
-# Test across all supported Python versions (3.8-3.13)
-tox
+Tests use an offline tile downloader. The `geo` environment enforces at least
+85% total coverage. Tox tests installed wheels. The `package` environment
+builds the source distribution and wheel and checks their metadata with Twine.
+Contributions should include regression tests for behavior changes and pass
+the relevant environments above.
 
-# Test specific Python versions
-tox -e py38,py311,py313
-```
+## License and support
 
-## Dependencies
-
-- **[py-staticmaps](https://github.com/flopp/py-staticmaps)** - Static map image generation
-- **[distinctipy](https://github.com/alan-turing-institute/distinctipy)** - Visually distinct color generation
-- **[Pillow](https://python-pillow.org/)** - Python Imaging Library
-
-## Changelog
-
-### v0.3.6 (Latest)
-- ✅ **Full modernization** - Migrated to modern `pyproject.toml` packaging
-- ✅ **Enhanced testing** - 105+ tests with 80% coverage across Python 3.8-3.13
-- ✅ **Type safety** - Complete type annotations with mypy support
-- ✅ **Bug fixes** - Fixed critical color scaling bug in `distinctipy` integration
-- ✅ **Cross-platform** - Verified compatibility across Windows, macOS, and Linux
-- ✅ **Modern CI/CD** - Updated GitHub Actions with pip caching and separate linting
-- ✅ **Compatibility patches** - Automatic fixes for Pillow compatibility issues
-
-### Previous Versions
-- v0.3.5 - Initial modernization and bug fixes
-- v0.3.4 and earlier - Legacy versions
-
-## Contributing
-
-We welcome contributions! Please see our development guidelines:
-
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature-name`
-3. **Make your changes** with tests
-4. **Run quality checks**: `tox -e flake8,mypy`
-5. **Run tests**: `tox`
-6. **Submit a pull request**
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-- 📖 **Documentation**: [GitHub README](https://github.com/eddiethedean/landfall#readme)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/eddiethedean/landfall/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/eddiethedean/landfall/discussions)
-
----
-
-**Made with ❤️ for the geospatial Python community**
+MIT license; see [LICENSE](LICENSE). Report bugs through
+[GitHub Issues](https://github.com/eddiethedean/landfall/issues).

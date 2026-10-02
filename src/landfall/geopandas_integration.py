@@ -1,123 +1,45 @@
-"""
-Functions for plotting GeoPandas and Shapely geometries.
-"""
+"""Plot GeoPandas and Shapely geometries in geographic coordinates."""
 
 from typing import Any, List, Optional, Sequence, Tuple, Union
+
 import staticmaps
 from PIL.Image import Image
 
+from landfall.color import process_colors
+from landfall.geojson import add_geometry, extract_geometries
 from landfall.plot import plot_zoom
-from landfall.points import add_points
-from landfall.lines import add_lines
-from landfall.polygons import add_polygons
 
 tp = staticmaps.tile_provider_OSM
 
-# Import guard for optional dependencies
-try:
-    import geopandas as gpd  # noqa: F401
-    import shapely.geometry as geom  # noqa: F401
-
-    GEOPANDAS_AVAILABLE = True
-except ImportError:
-    GEOPANDAS_AVAILABLE = False
-
 
 def _check_geopandas_available() -> None:
-    """Check if GeoPandas is available and raise helpful error if not."""
-    if not GEOPANDAS_AVAILABLE:
+    try:
+        import geopandas  # noqa: F401
+        import shapely  # noqa: F401
+    except ImportError as error:
         raise ImportError(
             "GeoPandas not installed. Install with: pip install landfall[geo]"
-        )
+        ) from error
 
 
-def _geometry_to_coords(geometry: Any) -> Tuple[str, Any]:
-    """Convert shapely geometry to landfall format.
-
-    Args:
-        geometry: Shapely geometry object
-
-    Returns:
-        Tuple of (geometry_type, coordinates)
-
-    Raises:
-        ValueError: If geometry type is unsupported
-    """
-    geom_type = geometry.geom_type
-
-    if geom_type == "Point":
-        coords = geometry.coords[0]  # (lon, lat)
-        return "Point", coords
-    elif geom_type == "MultiPoint":
-        coords = list(geometry.coords)  # [(lon, lat), ...]
-        return "MultiPoint", coords
-    elif geom_type == "LineString":
-        coords = list(geometry.coords)  # [(lon, lat), ...]
-        return "LineString", coords
-    elif geom_type == "MultiLineString":
-        coords = [
-            list(line.coords) for line in geometry.geoms
-        ]  # [[(lon, lat), ...], ...]
-        return "MultiLineString", coords
-    elif geom_type == "Polygon":
-        coords = [
-            list(ring.coords) for ring in geometry.interiors
-        ]  # [[(lon, lat), ...], ...]
-        coords.insert(0, list(geometry.exterior.coords))  # Add exterior ring first
-        return "Polygon", coords
-    elif geom_type == "MultiPolygon":
-        coords = []
-        for polygon in geometry.geoms:
-            polygon_coords = [list(ring.coords) for ring in polygon.interiors]
-            polygon_coords.insert(0, list(polygon.exterior.coords))
-            coords.append(polygon_coords)
-        return "MultiPolygon", coords
-    else:
-        raise ValueError(f"Unsupported geometry type: {geom_type}")
+def _add_geometry(
+    context: staticmaps.Context, geometry: Any, color: Any, size: int = 10
+) -> bool:
+    if geometry is None or geometry.is_empty:
+        return False
+    for kind, coords, _ in extract_geometries(geometry.__geo_interface__):
+        add_geometry(context, kind, coords, {"color": color, "marker-size": size})
+    return True
 
 
-def _extract_gdf_colors(
-    gdf: Any, color_column: Optional[str] = None
-) -> Optional[List[str]]:
-    """Extract colors from GeoDataFrame column.
-
-    Args:
-        gdf: GeoDataFrame
-        color_column: Name of color column
-
-    Returns:
-        List of colors or None
-    """
-    if color_column is None or color_column not in gdf.columns:
-        return None
-
-    try:
-        colors: List[str] = gdf[color_column].astype(str).tolist()
-        return colors
-    except Exception:
-        return None
-
-
-def _extract_gdf_sizes(
-    gdf: Any, size_column: Optional[str] = None
-) -> Optional[List[int]]:
-    """Extract sizes from GeoDataFrame column.
-
-    Args:
-        gdf: GeoDataFrame
-        size_column: Name of size column
-
-    Returns:
-        List of sizes or None
-    """
-    if size_column is None or size_column not in gdf.columns:
-        return None
-
-    try:
-        sizes: List[int] = gdf[size_column].astype(int).tolist()
-        return sizes
-    except Exception:
-        return None
+def _render(
+    context: staticmaps.Context,
+    window_size: Tuple[int, int],
+    zoom: int,
+    set_zoom: Optional[int],
+) -> Image:
+    context.set_zoom(plot_zoom(context, window_size, zoom, set_zoom))
+    return context.render_pillow(*window_size)  # type: ignore[no-any-return]
 
 
 def plot_geometry(
@@ -128,61 +50,18 @@ def plot_geometry(
     set_zoom: Optional[int] = None,
     context: Optional[staticmaps.Context] = None,
 ) -> Image:
-    """Plot a single shapely geometry on a map.
+    """Plot a Shapely geometry in WGS84 (longitude, latitude) coordinates.
 
-    Args:
-        geometry: Shapely geometry object
-        tile_provider: Map tile provider
-        window_size: Output image size (width, height)
-        zoom: Zoom level adjustment
-        set_zoom: Override automatic zoom level
-        context: Optional existing staticmaps context
-
-    Returns:
-        PIL Image with plotted geometry
-
-    Raises:
-        ImportError: If GeoPandas/Shapely not installed
-        ValueError: If geometry type is unsupported
+    Polygon holes, multipart shapes, and GeometryCollections are preserved.
+    Empty geometries raise ValueError.
     """
     _check_geopandas_available()
-
     if context is None:
         context = staticmaps.Context()
-
     context.set_tile_provider(tile_provider)
-
-    geom_type, coords = _geometry_to_coords(geometry)
-
-    # Plot based on geometry type
-    if geom_type == "Point":
-        lon, lat = coords
-        add_points(context, [lat], [lon])
-    elif geom_type == "MultiPoint":
-        lats = [coord[1] for coord in coords]
-        lons = [coord[0] for coord in coords]
-        add_points(context, lats, lons)
-    elif geom_type == "LineString":
-        line = [(coord[1], coord[0]) for coord in coords]  # Convert to lat, lon
-        add_lines(context, [line])
-    elif geom_type == "MultiLineString":
-        lines = [[(coord[1], coord[0]) for coord in line] for line in coords]
-        add_lines(context, lines)
-    elif geom_type == "Polygon":
-        polygons = [[(coord[1], coord[0]) for coord in ring] for ring in coords]
-        add_polygons(context, polygons)
-    elif geom_type == "MultiPolygon":
-        polygons = []
-        for polygon_coords in coords:
-            for ring in polygon_coords:
-                ring_coords = [(coord[1], coord[0]) for coord in ring]
-                polygons.append(ring_coords)
-        add_polygons(context, polygons)
-
-    zoom = plot_zoom(context, window_size, zoom, set_zoom)
-    context.set_zoom(zoom)
-
-    return context.render_pillow(*window_size)  # type: ignore
+    if not _add_geometry(context, geometry, "blue"):
+        raise ValueError("No non-empty geometries to plot")
+    return _render(context, window_size, zoom, set_zoom)
 
 
 def plot_geometries(
@@ -194,73 +73,43 @@ def plot_geometries(
     set_zoom: Optional[int] = None,
     context: Optional[staticmaps.Context] = None,
 ) -> Image:
-    """Plot multiple shapely geometries on a map.
+    """Plot WGS84 Shapely geometries; skip null or empty entries.
 
-    Args:
-        geometries: Sequence of shapely geometry objects
-        tile_provider: Map tile provider
-        colors: Colors for geometries
-        window_size: Output image size (width, height)
-        zoom: Zoom level adjustment
-        set_zoom: Override automatic zoom level
-        context: Optional existing staticmaps context
-
-    Returns:
-        PIL Image with plotted geometries
-
-    Raises:
-        ImportError: If GeoPandas/Shapely not installed
-        ValueError: If any geometry type is unsupported
+    Colors may be a palette name, a single-item list to broadcast, or one
+    color per input geometry. Empty inputs raise ValueError.
     """
     _check_geopandas_available()
-
     if context is None:
         context = staticmaps.Context()
-
     context.set_tile_provider(tile_provider)
+    palette = process_colors(
+        colors if colors is not None else ["blue"], len(geometries)
+    )
+    added = False
+    for geometry, color in zip(geometries, palette):
+        added = _add_geometry(context, geometry, color) or added
+    if not added:
+        raise ValueError("No non-empty geometries to plot")
+    return _render(context, window_size, zoom, set_zoom)
 
-    # Process each geometry
-    for i, geometry in enumerate(geometries):
-        geom_type, coords = _geometry_to_coords(geometry)
 
-        # Get color for this geometry
-        if colors is not None:
-            if isinstance(colors, str):
-                color = colors
-            else:
-                color = colors[i] if i < len(colors) else colors[0]
-        else:
-            color = "blue"
+def _extract_gdf_colors(
+    gdf: Any, color_column: Optional[str] = None
+) -> Optional[List[str]]:
+    if color_column is None or color_column not in gdf.columns:
+        return None
+    return list(gdf[color_column].astype(str))
 
-        # Plot based on geometry type
-        if geom_type == "Point":
-            lon, lat = coords
-            add_points(context, [lat], [lon], colors=[color])
-        elif geom_type == "MultiPoint":
-            lats = [coord[1] for coord in coords]
-            lons = [coord[0] for coord in coords]
-            add_points(context, lats, lons, colors=[color])
-        elif geom_type == "LineString":
-            line = [(coord[1], coord[0]) for coord in coords]
-            add_lines(context, [line], colors=[color])
-        elif geom_type == "MultiLineString":
-            lines = [[(coord[1], coord[0]) for coord in line] for line in coords]
-            add_lines(context, lines, colors=[color])
-        elif geom_type == "Polygon":
-            polygons = [[(coord[1], coord[0]) for coord in ring] for ring in coords]
-            add_polygons(context, polygons, colors=[color])
-        elif geom_type == "MultiPolygon":
-            polygons = []
-            for polygon_coords in coords:
-                for ring in polygon_coords:
-                    ring_coords = [(coord[1], coord[0]) for coord in ring]
-                    polygons.append(ring_coords)
-            add_polygons(context, polygons, colors=[color])
 
-    zoom = plot_zoom(context, window_size, zoom, set_zoom)
-    context.set_zoom(zoom)
-
-    return context.render_pillow(*window_size)  # type: ignore
+def _extract_gdf_sizes(
+    gdf: Any, size_column: Optional[str] = None
+) -> Optional[List[int]]:
+    if size_column is None or size_column not in gdf.columns:
+        return None
+    try:
+        return list(gdf[size_column].astype(int))
+    except (ValueError, TypeError, OverflowError) as error:
+        raise ValueError("size_column must contain integer marker sizes") from error
 
 
 def plot_geodataframe(
@@ -275,98 +124,45 @@ def plot_geodataframe(
     set_zoom: Optional[int] = None,
     context: Optional[staticmaps.Context] = None,
 ) -> Image:
-    """Plot a GeoDataFrame on a map.
+    """Plot a GeoDataFrame, reprojecting its selected geometry to WGS84.
 
-    Args:
-        gdf: GeoDataFrame
-        geometry_column: Name of geometry column (auto-detect if None)
-        color_column: Name of color column
-        size_column: Name of size column
-        colors: Colors for geometries
-        tile_provider: Map tile provider
-        window_size: Output image size (width, height)
-        zoom: Zoom level adjustment
-        set_zoom: Override automatic zoom level
-        context: Optional existing staticmaps context
-
-    Returns:
-        PIL Image with plotted GeoDataFrame
-
-    Raises:
-        ImportError: If GeoPandas/Shapely not installed
-        ValueError: If GeoDataFrame has no geometry column or unsupported geometries
+    Frames without a CRS are assumed to contain longitude/latitude values.
+    color_column contains color names or hex values; size_column controls
+    marker sizes. Styling follows row position regardless of index labels.
+    Empty geometries are skipped; an entirely empty frame raises ValueError.
     """
     _check_geopandas_available()
-
-    if context is None:
-        context = staticmaps.Context()
-
-    context.set_tile_provider(tile_provider)
-
-    # Auto-detect geometry column if not specified
     if geometry_column is None:
-        geometry_column = gdf.geometry.name
-        if geometry_column is None:
-            raise ValueError("GeoDataFrame has no geometry column")
-
+        try:
+            geometry_column = gdf.geometry.name
+        except AttributeError as error:
+            raise ValueError("GeoDataFrame has no geometry column") from error
     if geometry_column not in gdf.columns:
         raise ValueError(
             f"Geometry column '{geometry_column}' not found in GeoDataFrame"
         )
+    import geopandas as gpd
 
-    # Extract colors and sizes from columns if specified
+    geometries = gpd.GeoSeries(gdf[geometry_column])
+    if geometries.crs is not None:
+        geometries = geometries.to_crs(epsg=4326)
     gdf_colors = _extract_gdf_colors(gdf, color_column)
-    gdf_sizes = _extract_gdf_sizes(gdf, size_column)
-
-    # Process each row
-    for i, row in gdf.iterrows():
-        geometry = row[geometry_column]
-
-        if geometry is None or geometry.is_empty:
-            continue
-
-        geom_type, coords = _geometry_to_coords(geometry)
-
-        # Get color for this geometry
-        if gdf_colors is not None:
-            color = gdf_colors[i]
-        elif colors is not None:
-            if isinstance(colors, str):
-                color = colors
-            else:
-                color = colors[i] if i < len(colors) else colors[0]
-        else:
-            color = "blue"
-
-        # Get size for points
-        size = gdf_sizes[i] if gdf_sizes is not None else 10
-
-        # Plot based on geometry type
-        if geom_type == "Point":
-            lon, lat = coords
-            add_points(context, [lat], [lon], colors=[color], point_size=size)
-        elif geom_type == "MultiPoint":
-            lats = [coord[1] for coord in coords]
-            lons = [coord[0] for coord in coords]
-            add_points(context, lats, lons, colors=[color], point_size=size)
-        elif geom_type == "LineString":
-            line = [(coord[1], coord[0]) for coord in coords]
-            add_lines(context, [line], colors=[color])
-        elif geom_type == "MultiLineString":
-            lines = [[(coord[1], coord[0]) for coord in line] for line in coords]
-            add_lines(context, lines, colors=[color])
-        elif geom_type == "Polygon":
-            polygons = [[(coord[1], coord[0]) for coord in ring] for ring in coords]
-            add_polygons(context, polygons, colors=[color])
-        elif geom_type == "MultiPolygon":
-            polygons = []
-            for polygon_coords in coords:
-                for ring in polygon_coords:
-                    ring_coords = [(coord[1], coord[0]) for coord in ring]
-                    polygons.append(ring_coords)
-            add_polygons(context, polygons, colors=[color])
-
-    zoom = plot_zoom(context, window_size, zoom, set_zoom)
-    context.set_zoom(zoom)
-
-    return context.render_pillow(*window_size)  # type: ignore
+    palette = process_colors(
+        gdf_colors
+        if gdf_colors is not None
+        else colors
+        if colors is not None
+        else ["blue"],
+        len(gdf),
+    )
+    sizes = _extract_gdf_sizes(gdf, size_column)
+    if context is None:
+        context = staticmaps.Context()
+    context.set_tile_provider(tile_provider)
+    added = False
+    for position, geometry in enumerate(geometries):
+        size = sizes[position] if sizes is not None else 10
+        added = _add_geometry(context, geometry, palette[position], size) or added
+    if not added:
+        raise ValueError("No non-empty geometries to plot")
+    return _render(context, window_size, zoom, set_zoom)

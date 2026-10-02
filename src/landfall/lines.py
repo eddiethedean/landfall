@@ -3,10 +3,13 @@ Functions for plotting lines and polylines.
 """
 
 from typing import Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
+
 import staticmaps
 from PIL.Image import Image
 
+from landfall.color import ColorInput, convert_color
 from landfall.plot import plot_colors, plot_zoom
+from landfall.validation import create_latlng
 
 tp = staticmaps.tile_provider_OSM
 RED = staticmaps.RED
@@ -14,7 +17,7 @@ RED = staticmaps.RED
 
 def create_line_points(line: Iterable[Tuple[float, float]]) -> List[Any]:
     """Convert line coordinates to staticmaps LatLng objects."""
-    return [staticmaps.create_latlng(lat, lon) for lat, lon in line]
+    return [create_latlng(lat, lon) for lat, lon in line]
 
 
 def flip_line_coords(
@@ -27,7 +30,7 @@ def flip_line_coords(
 def plot_lines(
     lines: Sequence[Sequence[Tuple[float, float]]],
     *,
-    color: staticmaps.Color = RED,
+    color: ColorInput = RED,
     colors: Optional[Union[Sequence[Any], str]] = None,
     ids: Optional[Sequence[Any]] = None,
     id_colors: Optional[Union[Mapping[Any, Any], str]] = None,
@@ -83,7 +86,7 @@ def plot_lines(
 def add_lines(
     context: staticmaps.Context,
     lines: Sequence[Sequence[Tuple[float, float]]],
-    color: staticmaps.Color = RED,
+    color: ColorInput = RED,
     colors: Optional[Union[Sequence[Any], str]] = None,
     ids: Optional[Sequence[Any]] = None,
     id_colors: Optional[Union[Mapping[Any, Any], str]] = None,
@@ -102,9 +105,6 @@ def add_lines(
         width: Line width in pixels
         flip_coords: Whether coordinates are in (lon, lat) order
     """
-    if flip_coords:
-        lines = [flip_line_coords(line) for line in lines]
-
     count = len(lines)
 
     colors = plot_colors(
@@ -118,7 +118,7 @@ def add_lines(
 def plot_line(
     line: Sequence[Tuple[float, float]],
     tile_provider: Any = tp,
-    color: staticmaps.Color = RED,
+    color: ColorInput = RED,
     width: int = 2,
     window_size: Tuple[int, int] = (500, 400),
     zoom: int = 0,
@@ -161,8 +161,8 @@ def plot_line(
 def add_line(
     context: staticmaps.Context,
     line: Sequence[Tuple[float, float]],
-    color: staticmaps.Color,
-    width: int,
+    color: ColorInput = RED,
+    width: int = 2,
     flip_coords: bool = False,
 ) -> None:
     """Add a single line to a staticmaps context.
@@ -180,7 +180,7 @@ def add_line(
     context.add_object(
         staticmaps.Line(
             create_line_points(line),
-            color=color,
+            color=convert_color(color),
             width=width,
         )
     )
