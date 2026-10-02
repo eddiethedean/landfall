@@ -374,6 +374,53 @@ def test_geometries_palette_applies_to_every_part(mock_context):
     ] * 2 + [(255, 0, 0)] * 2
 
 
+def test_geometry_helpers_accept_literal_color_strings(mock_context):
+    from landfall import plot_geodataframe, plot_geometries
+
+    points = [shapely.geometry.Point(-82, 27), shapely.geometry.Point(-83, 28)]
+    plot_geometries(points, colors="red", context=mock_context)
+    assert [obj.color().int_rgb() for obj in mock_context._objects] == [
+        (255, 0, 0),
+        (255, 0, 0),
+    ]
+
+    frame = geopandas.GeoDataFrame(geometry=points)
+    mock_context._objects.clear()
+    plot_geodataframe(frame, colors="red", context=mock_context)
+    assert [obj.color().int_rgb() for obj in mock_context._objects] == [
+        (255, 0, 0),
+        (255, 0, 0),
+    ]
+
+
+def test_empty_geometry_rows_can_have_null_styles(mock_context):
+    from landfall import plot_geodataframe, plot_geometries
+
+    points = [shapely.geometry.Point(-82, 27), None, shapely.geometry.Point(-83, 28)]
+    plot_geometries(points, colors=["red", None, "blue"], context=mock_context)
+    assert [obj.color().int_rgb() for obj in mock_context._objects] == [
+        (255, 0, 0),
+        (0, 0, 255),
+    ]
+
+    frame = geopandas.GeoDataFrame(
+        {"color": ["red", None, "blue"], "size": [10, None, 12]},
+        geometry=points,
+    )
+    mock_context._objects.clear()
+    plot_geodataframe(
+        frame,
+        color_column="color",
+        size_column="size",
+        context=mock_context,
+    )
+    assert [obj.color().int_rgb() for obj in mock_context._objects] == [
+        (255, 0, 0),
+        (0, 0, 255),
+    ]
+    assert [obj.size() for obj in mock_context._objects] == [10, 12]
+
+
 def test_null_rows_keep_style_alignment(mock_context):
     from landfall import plot_geodataframe
 

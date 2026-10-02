@@ -38,8 +38,13 @@ class PolygonArea(staticmaps.Area):
         for hole in rings[1:]:
             draw.polygon(hole, fill=(0, 0, 0, 0))
         if self.width() > 0:
+            outline = Image.new("RGBA", renderer.image().size, (0, 0, 0, 0))
+            outline_draw = ImageDraw.Draw(outline)
             for ring in rings:
-                draw.line(ring, fill=self.color().int_rgba(), width=self.width())
+                outline_draw.line(
+                    ring, fill=self.color().int_rgba(), width=self.width()
+                )
+            overlay = Image.alpha_composite(overlay, outline)
         renderer.alpha_compose(overlay)
 
     def render_svg(self, renderer: Any) -> None:

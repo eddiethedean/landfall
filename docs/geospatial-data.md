@@ -84,8 +84,10 @@ The selected geometry column is reprojected to WGS84 if it has a CRS.
 If it has no CRS, Landfall assumes its coordinates are already longitude and
 latitude. `color_column` should contain color names or hex values;
 `size_column` should contain integer marker sizes. Use `colors="distinct"`
-when you want generated colors instead of a color column. Styling follows
-row order even if the frame index contains strings or duplicates.
+when you want generated colors instead of a color column, or `colors="red"`
+to apply one literal color. Styling follows row order even if the frame index
+contains strings or duplicates. Null and empty geometries are skipped along
+with their corresponding styles.
 
 ## Shapely geometries
 

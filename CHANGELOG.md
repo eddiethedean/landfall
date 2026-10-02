@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GeoDataFrame styling follows row position rather than index labels and respects
   the selected geometry column's CRS, reprojecting to WGS84 when available.
 - GeoDataFrame palette names and missing geometry columns now behave consistently.
+- Shapely and GeoDataFrame helpers accept literal `colors="red"` as well as
+  generated palette names; styles for null or empty geometry rows are ignored.
+- Transparent polygon outlines no longer erase the fill beneath them in Pillow.
 - A fill alpha of zero remains fully transparent.
 - Seeded random palettes generate a sequence of colors without changing global
   random state; ID palettes follow first appearance rather than set order.

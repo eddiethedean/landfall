@@ -29,6 +29,9 @@ render Pillow or SVG output. Examples and pictures are in
 `plot_geometry`, `plot_geometries`, and `plot_geodataframe` require the
 `landfall[geo]` extra. Their imports are available without it, but calling
 them raises a helpful `ImportError`.
+For `plot_geometries` and `plot_geodataframe`, `colors="red"` applies that
+literal color to every geometry; the palette names `"distinct"`, `"random"`,
+and `"wheel"` generate palettes.
 
 ## Shared plotting options
 

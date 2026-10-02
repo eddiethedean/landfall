@@ -265,6 +265,26 @@ def test_polygon_holes_preserve_background_and_underlying_objects(mock_context):
     )
 
 
+def test_transparent_polygon_border_preserves_fill_pixels():
+    context = landfall.Context()
+    context.set_tile_provider(staticmaps.tile_provider_None)
+    context.set_background_color(staticmaps.WHITE)
+    context.set_center(staticmaps.create_latlng(0, 0))
+    context.set_zoom(11)
+    context.add_polygon(
+        [(-0.1, -0.1), (-0.1, 0.1), (0.1, 0.1), (0.1, -0.1)],
+        fill_color="blue",
+        color="#ff000000",
+        width=8,
+    )
+    image = context.render_pillow(400, 400)
+    transformer = staticmaps.Transformer(
+        400, 400, 11, staticmaps.create_latlng(0, 0), 256
+    )
+    x, y = transformer.ll2pixel(staticmaps.create_latlng(0, 0.1))
+    assert image.getpixel((int(x) - 2, int(y))) == (0, 0, 255, 255)
+
+
 @pytest.mark.parametrize(
     "kind,coords,expected",
     [

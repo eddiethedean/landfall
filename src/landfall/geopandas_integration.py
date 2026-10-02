@@ -10,6 +10,29 @@ from landfall.geojson import add_geometry, extract_geometries
 from landfall.plot import plot_zoom
 
 tp = staticmaps.tile_provider_OSM
+COLOR_PALETTES = {"distinct", "random", "wheel"}
+
+
+def _drawable_positions(geometries: Sequence[Any]) -> List[int]:
+    return [
+        position
+        for position, geometry in enumerate(geometries)
+        if geometry is not None and not geometry.is_empty
+    ]
+
+
+def _process_row_colors(
+    colors: Optional[Union[Sequence[Any], str]],
+    row_count: int,
+    positions: Sequence[int],
+) -> List[staticmaps.Color]:
+    if colors is None:
+        colors = ["blue"]
+    elif isinstance(colors, str) and colors not in COLOR_PALETTES:
+        colors = [colors]
+    elif not isinstance(colors, str) and len(colors) > 1 and len(colors) == row_count:
+        colors = [colors[position] for position in positions]
+    return process_colors(colors, len(positions))
 
 
 def _check_geopandas_available() -> None:
@@ -82,12 +105,13 @@ def plot_geometries(
     if context is None:
         context = staticmaps.Context()
     context.set_tile_provider(tile_provider)
-    palette = process_colors(
-        colors if colors is not None else ["blue"], len(geometries)
-    )
+    positions = _drawable_positions(geometries)
+    if not positions:
+        raise ValueError("No non-empty geometries to plot")
+    palette = _process_row_colors(colors, len(geometries), positions)
     added = False
-    for geometry, color in zip(geometries, palette):
-        added = _add_geometry(context, geometry, color) or added
+    for position, color in zip(positions, palette):
+        added = _add_geometry(context, geometries[position], color) or added
     if not added:
         raise ValueError("No non-empty geometries to plot")
     return _render(context, window_size, zoom, set_zoom)
@@ -102,12 +126,17 @@ def _extract_gdf_colors(
 
 
 def _extract_gdf_sizes(
-    gdf: Any, size_column: Optional[str] = None
+    gdf: Any,
+    size_column: Optional[str] = None,
+    positions: Optional[Sequence[int]] = None,
 ) -> Optional[List[int]]:
     if size_column is None or size_column not in gdf.columns:
         return None
     try:
-        return list(gdf[size_column].astype(int))
+        values = gdf[size_column]
+        if positions is not None:
+            values = values.iloc[list(positions)]
+        return list(values.astype(int))
     except (ValueError, TypeError, OverflowError) as error:
         raise ValueError("size_column must contain integer marker sizes") from error
 
@@ -146,23 +175,27 @@ def plot_geodataframe(
     geometries = gpd.GeoSeries(gdf[geometry_column])
     if geometries.crs is not None:
         geometries = geometries.to_crs(epsg=4326)
+    positions = _drawable_positions(geometries)
+    if not positions:
+        raise ValueError("No non-empty geometries to plot")
     gdf_colors = _extract_gdf_colors(gdf, color_column)
-    palette = process_colors(
-        gdf_colors
-        if gdf_colors is not None
-        else colors
-        if colors is not None
-        else ["blue"],
-        len(gdf),
-    )
-    sizes = _extract_gdf_sizes(gdf, size_column)
+    if gdf_colors is not None:
+        palette = process_colors(
+            [gdf_colors[position] for position in positions], len(positions)
+        )
+    else:
+        palette = _process_row_colors(colors, len(gdf), positions)
+    sizes = _extract_gdf_sizes(gdf, size_column, positions)
     if context is None:
         context = staticmaps.Context()
     context.set_tile_provider(tile_provider)
     added = False
-    for position, geometry in enumerate(geometries):
-        size = sizes[position] if sizes is not None else 10
-        added = _add_geometry(context, geometry, palette[position], size) or added
+    for palette_position, row_position in enumerate(positions):
+        geometry = geometries.iloc[row_position]
+        size = sizes[palette_position] if sizes is not None else 10
+        added = (
+            _add_geometry(context, geometry, palette[palette_position], size) or added
+        )
     if not added:
         raise ValueError("No non-empty geometries to plot")
     return _render(context, window_size, zoom, set_zoom)
