@@ -76,6 +76,8 @@ Points, lines, circles, GeoJSON, and GeoPandas/Shapely functions also accept
 `zoom=0` (offset from the automatically determined zoom) and `set_zoom=None`
 (an explicit zoom override). The polygon plotting functions do not accept
 these zoom options. Rendering may download tiles from the selected provider.
+See [use a custom tile service](custom-tile-service.md) for URL templates,
+authentication, and a complete example.
 
 ## Coordinates and sizing
 

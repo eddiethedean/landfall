@@ -52,6 +52,9 @@ Read GeoJSON, reproject GeoDataFrames, or plot Shapely geometry directly.
 </div>
 </div>
 
+Need a different basemap? See [how to connect a custom tile service](custom-tile-service.md)
+and render it behind Landfall's shapes.
+
 ## A few things you can make
 
 These examples use real OpenStreetMap tiles and the same public API described
