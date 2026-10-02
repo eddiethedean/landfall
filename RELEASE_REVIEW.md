@@ -1,8 +1,10 @@
 # 0.4.2 release review
 
-Reviewed and prepared on October 2, 2026. Changes are on `codex/release-0.4.2`.
-The local release checks pass. Hosted Windows, Linux, and macOS CI must still
-pass before tagging and publishing; this review did not publish the release.
+Reviewed on October 2, 2026. The annotated `v0.4.2` tag points to commit
+`23307420168a9d82b03cf9196e1b2adcdbfb240b` on `main`. The release-tag CI run
+completed successfully with all 31 jobs passing. This records the tagged,
+validated source; the GitHub Release and PyPI distributions have not yet been
+published, so the changelog keeps its `Unreleased` heading until publication.
 
 ## Findings resolved
 
@@ -43,6 +45,7 @@ image was returned.
 | Wheel contents | Includes all new modules, `py.typed`, and MIT license |
 | Notebook examples | All **45 code cells** across four notebooks passed offline |
 | Git whitespace/error check | Passed |
+| Hosted CI for tag `v0.4.2` | **31 jobs passed**; [workflow run](https://github.com/eddiethedean/landfall/actions/runs/37056795159) |
 
 Python 3.9 was rerun with managed CPython 3.9.25 after the macOS system
 interpreter's LibreSSL triggered urllib3's OpenSSL warning. For the local
@@ -65,12 +68,10 @@ workarounds are not repository requirements.
 
 ## Remaining release steps
 
-1. Run the updated hosted CI matrix. It includes core Python 3.8–3.13 on Windows,
-   Linux, and Intel macOS, optional geo tests on 3.8/3.9/3.13, and macOS ARM64
-   coverage on Python 3.13.
-2. Replace the changelog's `Unreleased` label with the actual release date.
-3. Commit, tag `v0.4.2`, and publish the validated distributions through the
-   maintainer's normal release process.
+1. Build and publish the validated source and wheel distributions to PyPI.
+2. Create the GitHub Release for the existing `v0.4.2` tag and include the
+   release notes.
+3. Replace the changelog's `Unreleased` label with the actual publication date.
 
 Tests deliberately use offline tiles; live tile services were not exercised.
 Setuptools emits deprecation notices for the existing license-table/classifier
