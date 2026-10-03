@@ -71,7 +71,7 @@ with the pinned packages in `docs/requirements.txt`. Import
 `landfall` to match the README and package metadata URLs. The `latest`
 version normally follows the repository's default branch, so merge the docs
 changes there before publishing `latest`. Alternatively, activate the
-`codex/release-0.4.2` branch as a separate version while reviewing it.
+`codex/version-0.4.3` branch as a separate version while reviewing it.
 If a different slug is required, update the hosted links and `site_url`
 before publishing.
 

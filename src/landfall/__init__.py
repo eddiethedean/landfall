@@ -13,7 +13,7 @@ from landfall.lines import plot_line, plot_lines
 from landfall.points import plot_points, plot_points_data
 from landfall.polygons import plot_polygon, plot_polygons
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 
 __all__ = [
     "Context",

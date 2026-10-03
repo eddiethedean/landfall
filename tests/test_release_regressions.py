@@ -311,7 +311,7 @@ def test_import_does_not_patch_pillow_or_load_geopandas():
             "-c",
             'import sys; from PIL import ImageDraw; before = hasattr(ImageDraw.ImageDraw, "textsize"); '
             'import landfall; assert hasattr(ImageDraw.ImageDraw, "textsize") == before; '
-            'assert "geopandas" not in sys.modules; assert landfall.__version__ == "0.4.2"',
+            'assert "geopandas" not in sys.modules; assert landfall.__version__ == "0.4.3"',
         ],
         capture_output=True,
         text=True,
