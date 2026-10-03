@@ -118,6 +118,10 @@ context.render_svg(*SIZE).saveas("layers.svg")
 The same shapes can be rendered as a Pillow image or exported as SVG. The
 polygon's interior ring stays transparent so the underlying map remains visible.
 
+To add geohash or H3 heat cells to a composed map, use
+[`heatfall.Context`](https://heatfall.readthedocs.io/en/latest/usage.html),
+which extends Landfall's `Context` with heat layer methods.
+
 `Context` also has `add_point`, `add_lines`, `add_polygons`, `add_circle`, and
 `add_circles` methods. Set a tile provider or zoom directly on the context
 using py-staticmaps methods.

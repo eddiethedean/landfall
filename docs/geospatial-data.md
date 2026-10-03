@@ -18,6 +18,9 @@ in GeoJSON is ignored for two-dimensional plotting.
     single Shapely object, and `plot_geodataframe` when the data has columns,
     styles, or a coordinate reference system.
 
+For point observations that you want to group into geohash rectangles or H3
+cells, see the [Heatfall point data guide](https://heatfall.readthedocs.io/en/latest/data.html).
+
 ## GeoJSON features and files
 
 ```python

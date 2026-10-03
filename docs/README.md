@@ -55,6 +55,10 @@ Read GeoJSON, reproject GeoDataFrames, or plot Shapely geometry directly.
 Need a different basemap? See [how to connect a custom tile service](custom-tile-service.md)
 and render it behind Landfall's shapes.
 
+Working with point observations and want geohash or H3 heat layers? See the
+[Heatfall documentation](https://heatfall.readthedocs.io/en/latest/index.html)
+for gridding, styling, and combining heat cells with Landfall shapes.
+
 ## A few things you can make
 
 These examples use real OpenStreetMap tiles and the same public API described

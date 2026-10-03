@@ -14,6 +14,8 @@ Landfall turns geographic data into static map images with a small Python API.
 Plot points, routes, polygons, and circles; combine layers; or read GeoJSON and
 GeoPandas data. It uses [py-staticmaps](https://github.com/flopp/py-staticmaps)
 for map tiles and returns [Pillow](https://pillow.readthedocs.io/) images.
+For geohash or H3 heatmaps from point observations, see the companion
+[Heatfall documentation](https://heatfall.readthedocs.io/en/latest/index.html).
 
 ![Three points plotted on a real map of Tampa Bay](https://landfall.readthedocs.io/en/latest/images/points.png)
 
