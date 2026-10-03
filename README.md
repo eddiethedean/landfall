@@ -1,3 +1,7 @@
+<p>
+  <img src="https://landfall.readthedocs.io/en/latest/landfall_logo.png" width="144" height="144" alt="Landfall folded map and coastline logo">
+</p>
+
 # Landfall
 
 [![PyPI](https://img.shields.io/pypi/v/landfall.svg)](https://pypi.org/project/landfall/)

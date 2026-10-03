@@ -7,6 +7,8 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  logo: landfall_logo.png
+  favicon: landfall_logo.png
   features:
     - content.code.copy
     - navigation.top
