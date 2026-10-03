@@ -1,4 +1,35 @@
-# 0.4.2 release review
+# Release reviews
+
+## 0.4.3 release review
+
+Released on October 3, 2026. The annotated
+[`v0.4.3` tag](https://github.com/eddiethedean/landfall/tree/v0.4.3) points to
+commit `8b59bfaedff9a82c402c6916f333ff60ca724d14`. The source distribution and
+wheel were published to [PyPI](https://pypi.org/project/landfall/0.4.3/) through
+Trusted Publishing. Both files are available and are not yanked.
+
+This release introduces the coastal location-pin logo in the README,
+documentation header, and favicon. Package metadata, the runtime version,
+packaging checks, and the version regression test now use `0.4.3`.
+
+### Validation
+
+| Check | Result |
+| --- | --- |
+| Release workflow for tag `v0.4.3` | **Passed**; distribution build and PyPI publication both succeeded in the [release run](https://github.com/eddiethedean/landfall/actions/runs/37095073002). |
+| Hosted CI for tag `v0.4.3` | **31 jobs passed** in the [tag test run](https://github.com/eddiethedean/landfall/actions/runs/37095072999). |
+| Hosted CI for the matching `main` commit | **31 jobs passed** in the [main test run](https://github.com/eddiethedean/landfall/actions/runs/37095061438). |
+| PyPI files | Confirmed `landfall-0.4.3-py3-none-any.whl` and `landfall-0.4.3.tar.gz`; uploaded at 04:02:18 and 04:02:20 UTC on October 3, 2026. |
+| Fresh install from PyPI, Python 3.11 | Passed: distribution metadata and `landfall.__version__` both report `0.4.3`; core import does not eagerly load GeoPandas; offline point rendering returns a 320 × 240 Pillow image. |
+| Local release checks | Installed-wheel Python 3.11 tests, Ruff lint and formatting, mypy, sdist/wheel builds, strict Twine validation, and strict MkDocs build passed. |
+
+Install the published release with:
+
+```sh
+python -m pip install landfall==0.4.3
+```
+
+## 0.4.2 release review
 
 Reviewed on October 2, 2026. The annotated `v0.4.2` tag points to commit
 `23307420168a9d82b03cf9196e1b2adcdbfb240b` on `main`. The release-tag CI run
@@ -7,7 +38,7 @@ wheel were published to PyPI through Trusted Publishing on October 2, 2026.
 This review records the tag, CI result, and published artifacts; a GitHub
 Release page has not been created.
 
-## Findings resolved
+### Findings resolved
 
 | Impact | Finding | Resolution and evidence |
 | --- | --- | --- |
@@ -31,7 +62,7 @@ The baseline had **4 failing tests out of 202** when GeoPandas was installed.
 Several other defects passed the old suite because it checked only that an
 image was returned.
 
-## Validation
+### Validation
 
 | Check | Result |
 | --- | --- |
@@ -55,7 +86,7 @@ multi-version run, tox-uv avoided a copied-interpreter bootstrap problem with
 standalone Python. Standard tox was also verified independently. These local
 workarounds are not repository requirements.
 
-## Release behavior changes to communicate
+### Release behavior changes to communicate
 
 - Circle distances now match the documented units. Remove any manual factor-of-1,000
   workaround in downstream code.
@@ -68,7 +99,7 @@ workarounds are not repository requirements.
 - The minimum renderer version is py-staticmaps 0.5.0. Python 3.8 development and
   optional dependencies use compatible version markers.
 
-## Remaining release steps
+### Remaining release steps
 
 The package release is complete. Create a GitHub Release page for `v0.4.2` if
 you want release notes to appear in the GitHub Releases tab as well.

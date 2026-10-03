@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.3] - 2026-10-02
+## [0.4.3] - 2026-10-03
+
+Published the source distribution and wheel to
+[PyPI](https://pypi.org/project/landfall/0.4.3/) through Trusted Publishing.
+The [release workflow](https://github.com/eddiethedean/landfall/actions/runs/37095073002)
+and all 31 [tag CI jobs](https://github.com/eddiethedean/landfall/actions/runs/37095072999)
+passed.
 
 ### Changed
 - Replace the project artwork with a coastal location-pin logo in the README,
