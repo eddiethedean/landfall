@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from os import PathLike
 from typing import Any, Optional, Union
