@@ -128,6 +128,7 @@ color column is supplied. `color_name` takes precedence over `colors`.
 | `add_line`, `add_lines` | One line or a sequence of lines |
 | `add_polygon`, `add_polygons` | One polygon or a sequence of polygons |
 | `add_circle`, `add_circles` | One circle or arrays of circles |
+| `save(path, width, height, *, renderer=None)` | Save Pillow PNG, SVG, or explicitly selected Cairo PNG output |
 
 `Context.add_polygon` supports `holes`, a sequence of interior rings. Use
 py-staticmaps methods such as `set_tile_provider`, `set_zoom`,
@@ -137,6 +138,10 @@ output. `add_bounds` accepts an `s2sphere.LatLngRect` and optional
 `extra_pixel_bounds` to preserve a geographic extent with padding. `render_svg`
 returns a drawing whose `saveas(path)` method writes an SVG file. Cairo rendering
 requires `pip install 'landfall[cairo]'` and the system Cairo library.
+`Context.save()` infers Pillow output for `.png` and SVG output for `.svg`;
+pass `renderer="cairo"` to select Cairo PNG. The renderer must match the file
+extension. It returns `None` and calls the instance rendering method, so
+subclass render hooks are preserved.
 
 ## `random_color(rng=None)`
 
