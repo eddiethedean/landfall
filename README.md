@@ -17,7 +17,7 @@ by Florian Pigorsch, which supplies map tiles, framing, and rendering. Landfall
 keeps the native `py-staticmaps` API available through `landfall.Context`, so
 you can use its map objects, tile providers, context controls, and renderers
 directly alongside Landfall helpers. See the
-[guide to the full py-staticmaps API](https://landfall.readthedocs.io/en/latest/py-staticmaps/).
+[py-staticmaps interoperability guide](https://landfall.readthedocs.io/en/latest/py-staticmaps/).
 Landfall's convenience functions return [Pillow](https://pillow.readthedocs.io/)
 images.
 
@@ -120,7 +120,7 @@ Read the [full documentation on Read the Docs](https://landfall.readthedocs.io/e
 | --- | --- |
 | [Getting started](https://landfall.readthedocs.io/en/latest/getting-started/) | Installation, coordinates, first maps, and image output |
 | [Working with shapes](https://landfall.readthedocs.io/en/latest/shapes-and-styling/) | Layers, colors, groups, polygon holes, and circles |
-| [Full py-staticmaps API](https://landfall.readthedocs.io/en/latest/py-staticmaps/) | Native map objects, context controls, tile providers, and renderers |
+| [py-staticmaps interoperability](https://landfall.readthedocs.io/en/latest/py-staticmaps/) | Native map objects, context controls, tile providers, and renderers |
 | [GeoJSON and GeoPandas](https://landfall.readthedocs.io/en/latest/geospatial-data/) | Files, features, coordinate systems, and styling |
 | [API reference](https://landfall.readthedocs.io/en/latest/api/) | Public functions, parameters, defaults, and return values |
 | [Troubleshooting](https://landfall.readthedocs.io/en/latest/troubleshooting/) | Common errors, tile access, and optional dependencies |

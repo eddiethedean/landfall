@@ -14,7 +14,7 @@ provider, pass it as `tile_provider` to a plotting function or set it on a
 `Context`. See [how to configure a custom tile service](custom-tile-service.md)
 for URL templates, API keys, and a rendered example.
 Landfall builds on py-staticmaps and keeps its native context API available;
-see [using the full py-staticmaps API](py-staticmaps.md) for custom objects,
+see the [py-staticmaps interoperability guide](py-staticmaps.md) for custom objects,
 advanced context controls, and renderer choices.
 
 !!! info "What you get"

@@ -32,7 +32,7 @@ nav:
   - Home: README.md
   - Getting started: getting-started.md
   - Custom tile services: custom-tile-service.md
-  - Full py-staticmaps API: py-staticmaps.md
+  - py-staticmaps interoperability: py-staticmaps.md
   - Shapes and styling: shapes-and-styling.md
   - GeoJSON and GeoPandas: geospatial-data.md
   - API reference: api.md

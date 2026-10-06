@@ -1,4 +1,4 @@
-# Use the full py-staticmaps API
+# py-staticmaps interoperability
 
 [Documentation index](README.md) · [API reference](api.md) ·
 [Custom tile services](custom-tile-service.md)
