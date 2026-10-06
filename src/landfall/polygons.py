@@ -9,7 +9,7 @@ from PIL.Image import Image
 
 from landfall.area import PolygonArea
 from landfall.color import ColorInput, convert_color
-from landfall.plot import plot_colors, plot_fill_colors
+from landfall.plot import plot_colors, plot_fill_colors, set_tile_provider
 from landfall.validation import create_latlng
 
 tp = staticmaps.tile_provider_OSM
@@ -44,11 +44,12 @@ def plot_polygons(
     window_size: Tuple[int, int] = (500, 400),
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     if context is None:
         context = staticmaps.Context()
 
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
 
     add_polygons(
         context,
@@ -114,11 +115,12 @@ def plot_polygon(
     window_size: Tuple[int, int] = (500, 400),
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     if context is None:
         context = staticmaps.Context()
 
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
 
     if flip_coords:
         polygon = flip_polygon_coords(polygon)

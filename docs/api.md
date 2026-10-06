@@ -3,10 +3,13 @@
 [Documentation index](README.md) · [Getting started](getting-started.md)
 
 The names below are exported by `import landfall`. All `plot_*` functions
-return `PIL.Image.Image`. `Context` holds shapes for a combined map and can
-render Pillow or SVG output. Examples and pictures are in
+return `PIL.Image.Image`. `Context` holds shapes for a combined map and exposes
+the underlying py-staticmaps context API, including native map objects and
+Pillow, SVG, and optional Cairo renderers. Examples and pictures are in
 [shapes and styling](shapes-and-styling.md) and
-[geospatial data](geospatial-data.md).
+[geospatial data](geospatial-data.md). See
+[using the full py-staticmaps API](py-staticmaps.md) for features beyond
+Landfall's convenience wrappers.
 
 <div class="lf-card-grid" markdown="1">
 <div class="lf-card" markdown="1">
@@ -69,6 +72,7 @@ All `plot_*` functions accept:
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `tile_provider` | OpenStreetMap provider | A py-staticmaps tile provider |
+| `api_key` | `None` | Optional API key for providers whose URL uses `$k` |
 | `window_size` | `(500, 400)` | Output `(width, height)` in pixels |
 | `context` | `None` | Existing py-staticmaps or Landfall context to add shapes to |
 
@@ -127,9 +131,12 @@ color column is supplied. `color_name` takes precedence over `colors`.
 
 `Context.add_polygon` supports `holes`, a sequence of interior rings. Use
 py-staticmaps methods such as `set_tile_provider`, `set_zoom`,
-`render_pillow(width, height)`, and `render_svg(width, height)` to control
-output. `render_svg` returns a drawing whose `saveas(path)` method writes an
-SVG file.
+`add_bounds`, `set_cache_dir`, `render_pillow(width, height)`,
+`render_svg(width, height)`, and `render_cairo(width, height)` to control
+output. `add_bounds` accepts an `s2sphere.LatLngRect` and optional
+`extra_pixel_bounds` to preserve a geographic extent with padding. `render_svg`
+returns a drawing whose `saveas(path)` method writes an SVG file. Cairo rendering
+requires `pip install 'landfall[cairo]'` and the system Cairo library.
 
 ## `random_color(rng=None)`
 

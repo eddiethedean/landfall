@@ -12,8 +12,15 @@
 
 Landfall turns geographic data into static map images with a small Python API.
 Plot points, routes, polygons, and circles; combine layers; or read GeoJSON and
-GeoPandas data. It uses [py-staticmaps](https://github.com/flopp/py-staticmaps)
-for map tiles and returns [Pillow](https://pillow.readthedocs.io/) images.
+GeoPandas data. It is built on [py-staticmaps](https://github.com/flopp/py-staticmaps)
+by Florian Pigorsch, which supplies map tiles, framing, and rendering. Landfall
+keeps the native `py-staticmaps` API available through `landfall.Context`, so
+you can use its map objects, tile providers, context controls, and renderers
+directly alongside Landfall helpers. See the
+[guide to the full py-staticmaps API](https://landfall.readthedocs.io/en/latest/py-staticmaps/).
+Landfall's convenience functions return [Pillow](https://pillow.readthedocs.io/)
+images.
+
 For geohash or H3 heatmaps from point observations, see the companion
 [Heatfall documentation](https://heatfall.readthedocs.io/en/latest/index.html).
 
@@ -34,11 +41,15 @@ GeoPandas and Shapely integration.
 ```sh
 python -m pip install landfall
 python -m pip install 'landfall[geo]'  # optional
+python -m pip install 'landfall[cairo]'  # optional anti-aliased PNG output
 ```
 
 The default OpenStreetMap tile provider needs network access when rendering.
 If you use a different tile provider, pass a py-staticmaps provider through
-`tile_provider` or configure a `Context` directly.
+`tile_provider` or configure a `Context` directly. Providers that need a URL
+API key accept `api_key=` in plot functions or
+`context.set_tile_provider(provider, api_key=...)`. The optional `cairo` extra
+enables anti-aliased PNG output through `Context.render_cairo()`.
 
 ## Make a map
 
@@ -109,6 +120,7 @@ Read the [full documentation on Read the Docs](https://landfall.readthedocs.io/e
 | --- | --- |
 | [Getting started](https://landfall.readthedocs.io/en/latest/getting-started/) | Installation, coordinates, first maps, and image output |
 | [Working with shapes](https://landfall.readthedocs.io/en/latest/shapes-and-styling/) | Layers, colors, groups, polygon holes, and circles |
+| [Full py-staticmaps API](https://landfall.readthedocs.io/en/latest/py-staticmaps/) | Native map objects, context controls, tile providers, and renderers |
 | [GeoJSON and GeoPandas](https://landfall.readthedocs.io/en/latest/geospatial-data/) | Files, features, coordinate systems, and styling |
 | [API reference](https://landfall.readthedocs.io/en/latest/api/) | Public functions, parameters, defaults, and return values |
 | [Troubleshooting](https://landfall.readthedocs.io/en/latest/troubleshooting/) | Common errors, tile access, and optional dependencies |
@@ -123,3 +135,6 @@ links to example notebooks. For release history, see the
 Report bugs or request features through
 [GitHub Issues](https://github.com/eddiethedean/landfall/issues).
 Landfall is released under the [MIT license](LICENSE).
+The underlying [py-staticmaps project](https://github.com/flopp/py-staticmaps)
+was created by Florian Pigorsch and is also MIT licensed; see its
+[upstream license](https://github.com/flopp/py-staticmaps/blob/master/LICENSE).

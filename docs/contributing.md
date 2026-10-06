@@ -71,7 +71,7 @@ with the pinned packages in `docs/requirements.txt`. Import
 `landfall` to match the README and package metadata URLs. The `latest`
 version normally follows the repository's default branch, so merge the docs
 changes there before publishing `latest`. Alternatively, activate the
-`codex/version-0.4.3` branch as a separate version while reviewing it.
+`codex/version-0.5.0` branch as a separate version while reviewing it.
 If a different slug is required, update the hosted links and `site_url`
 before publishing.
 
@@ -80,7 +80,7 @@ before publishing.
 The `Release` workflow builds and validates the sdist and wheel, then publishes
 them to PyPI with Trusted Publishing. Configure the PyPI publisher for this
 repository, the `.github/workflows/release.yml` workflow, and the GitHub
-environment `pypi`. A pushed stable version tag such as `v0.4.3` starts the
+environment `pypi`. A pushed stable version tag such as `v0.5.0` starts the
 workflow automatically; it stops before upload if the tag does not match the
 version in `pyproject.toml`.
 

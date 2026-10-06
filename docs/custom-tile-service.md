@@ -77,13 +77,14 @@ tiles = staticmaps.TileProvider(
     url_pattern=(
         "https://tiles.example.org/streets/$z/$x/$y.png?apiKey=$k"
     ),
-    api_key=os.environ["LANDFALL_TILE_API_KEY"],
     attribution="Map data © Example Provider",
     max_zoom=18,
 )
 
 image = landfall.plot_points(
-    [(27.88, -82.49), (27.92, -82.46)], tile_provider=tiles
+    [(27.88, -82.49), (27.92, -82.46)],
+    tile_provider=tiles,
+    api_key=os.environ["LANDFALL_TILE_API_KEY"],
 )
 image.save("licensed-map.png")
 ```
@@ -93,6 +94,18 @@ the authentication parameter required by your service. This provider
 interface puts the key in the tile URL; it does not configure custom HTTP
 headers. Confirm the service allows server-side tile requests and that the
 key and usage comply with its terms.
+
+`py-staticmaps` also includes providers that use keys, such as
+`staticmaps.tile_provider_StadiaAlidadeSmooth` and
+`staticmaps.tile_provider_JawgLight`. Pass their key the same way:
+
+```python
+image = landfall.plot_points(
+    [(27.88, -82.49), (27.92, -82.46)],
+    tile_provider=staticmaps.tile_provider_StadiaAlidadeSmooth,
+    api_key=os.environ["STADIA_MAPS_API_KEY"],
+)
+```
 
 ## Render a real custom provider
 
@@ -142,6 +155,8 @@ passing the same provider to separate plotting calls and lets one map combine
 points, routes, polygons, and circles:
 
 ```python
+import os
+
 import landfall
 import staticmaps
 
@@ -153,7 +168,7 @@ tiles = staticmaps.TileProvider(
 )
 
 context = landfall.Context()
-context.set_tile_provider(tiles)
+context.set_tile_provider(tiles, api_key=os.environ.get("LANDFALL_TILE_API_KEY"))
 context.add_points([(27.88, -82.49), (27.92, -82.46)], colors="distinct")
 context.add_line([(27.88, -82.49), (27.92, -82.46)], color="#d12c31", width=4)
 context.render_pillow(640, 440).save("layered-city-map.png")

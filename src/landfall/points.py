@@ -8,7 +8,7 @@ import staticmaps
 from PIL.Image import Image
 
 from landfall.color import ColorInput, convert_color
-from landfall.plot import plot_colors, plot_zoom
+from landfall.plot import plot_colors, plot_zoom, set_tile_provider
 from landfall.validation import create_latlng
 
 tp = staticmaps.tile_provider_OSM
@@ -29,11 +29,12 @@ def plot_points(
     set_zoom: Optional[int] = None,
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     if context is None:
         context = staticmaps.Context()
 
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
 
     add_points(
         context=context,
@@ -99,6 +100,7 @@ def plot_points_data(
     set_zoom: Optional[int] = None,
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     lats = data[latitude_name]
     lons = data[longitude_name]
@@ -121,6 +123,7 @@ def plot_points_data(
         set_zoom=set_zoom,
         flip_coords=flip_coords,
         context=context,
+        api_key=api_key,
     )
 
 

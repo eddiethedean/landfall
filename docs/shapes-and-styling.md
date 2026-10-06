@@ -124,7 +124,10 @@ which extends Landfall's `Context` with heat layer methods.
 
 `Context` also has `add_point`, `add_lines`, `add_polygons`, `add_circle`, and
 `add_circles` methods. Set a tile provider or zoom directly on the context
-using py-staticmaps methods.
+using py-staticmaps methods. Landfall's `Context` remains a
+`staticmaps.Context`; add native objects with `context.add_object(...)` and
+use the rest of py-staticmaps directly. See [the full py-staticmaps guide](py-staticmaps.md)
+for examples.
 
 ## Colors and groups
 

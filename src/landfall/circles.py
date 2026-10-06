@@ -9,7 +9,7 @@ import staticmaps
 from PIL.Image import Image
 
 from landfall.color import ColorInput, convert_color
-from landfall.plot import plot_colors, plot_fill_colors, plot_zoom
+from landfall.plot import plot_colors, plot_fill_colors, plot_zoom, set_tile_provider
 from landfall.validation import create_latlng
 
 tp = staticmaps.tile_provider_OSM
@@ -39,6 +39,7 @@ def plot_circles(
     set_zoom: Optional[int] = None,
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot multiple circles on a map.
 
@@ -70,7 +71,7 @@ def plot_circles(
     if context is None:
         context = staticmaps.Context()
 
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
 
     add_circles(
         context,
@@ -181,6 +182,7 @@ def plot_circle(
     set_zoom: Optional[int] = None,
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot a single circle on a map.
 
@@ -205,7 +207,7 @@ def plot_circle(
     if context is None:
         context = staticmaps.Context()
 
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
 
     if flip_coords:
         latitude, longitude = longitude, latitude

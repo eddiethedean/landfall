@@ -71,6 +71,13 @@ def plot_zoom(
     return zoom
 
 
+def set_tile_provider(
+    context: staticmaps.Context, tile_provider: Any, api_key: Optional[str] = None
+) -> None:
+    """Configure a py-staticmaps tile provider, including its optional API key."""
+    context.set_tile_provider(tile_provider, api_key=api_key)
+
+
 def set_transparency(
     color: staticmaps.Color, a: Optional[int] = None
 ) -> staticmaps.Color:

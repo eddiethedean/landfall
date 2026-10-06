@@ -1,8 +1,9 @@
-from typing import Any, Sequence, Tuple
+from typing import Any, Optional, Sequence, Tuple
 
 from PIL.Image import Image
 from staticmaps import RED, Color, Context, tile_provider_OSM
 
+from landfall.plot import set_tile_provider
 from landfall.points import add_point
 from landfall.polygons import add_polygons, flip_polygon_coords
 
@@ -20,9 +21,10 @@ def plot_points_and_polygons(
     width: int = 2,
     size: Tuple[int, int] = (800, 600),
     flip_coords: bool = False,
+    api_key: Optional[str] = None,
 ) -> Image:
     context = Context()
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
     if flip_coords:
         polygons = [flip_polygon_coords(polygon) for polygon in polygons]
     add_polygons(context, polygons, fill_color=fill_color, width=width, color=color)

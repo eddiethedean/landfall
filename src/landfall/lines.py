@@ -8,7 +8,7 @@ import staticmaps
 from PIL.Image import Image
 
 from landfall.color import ColorInput, convert_color
-from landfall.plot import plot_colors, plot_zoom
+from landfall.plot import plot_colors, plot_zoom, set_tile_provider
 from landfall.validation import create_latlng
 
 tp = staticmaps.tile_provider_OSM
@@ -41,6 +41,7 @@ def plot_lines(
     set_zoom: Optional[int] = None,
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot multiple lines on a map.
 
@@ -64,7 +65,7 @@ def plot_lines(
     if context is None:
         context = staticmaps.Context()
 
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
 
     add_lines(
         context,
@@ -125,6 +126,7 @@ def plot_line(
     set_zoom: Optional[int] = None,
     flip_coords: bool = False,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot a single line on a map.
 
@@ -145,7 +147,7 @@ def plot_line(
     if context is None:
         context = staticmaps.Context()
 
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
 
     if flip_coords:
         line = flip_line_coords(line)

@@ -53,7 +53,9 @@ Read GeoJSON, reproject GeoDataFrames, or plot Shapely geometry directly.
 </div>
 
 Need a different basemap? See [how to connect a custom tile service](custom-tile-service.md)
-and render it behind Landfall's shapes.
+and render it behind Landfall's shapes. For specialized objects or advanced
+rendering, use the [full py-staticmaps API](py-staticmaps.md) directly through
+`landfall.Context`.
 
 Working with point observations and want geohash or H3 heat layers? See the
 [Heatfall documentation](https://heatfall.readthedocs.io/en/latest/index.html)
@@ -99,6 +101,15 @@ Find function choices, parameter defaults, coordinate rules, and `Context`
 methods.
 
 [Look up an option →](api.md)
+</div>
+<div class="lf-card" markdown="1">
+
+<p class="lf-card__title">Full py-staticmaps API</p>
+
+Use native map objects, tile providers, context controls, and renderers with
+Landfall's `Context`.
+
+[Go beyond the helpers →](py-staticmaps.md)
 </div>
 <div class="lf-card" markdown="1">
 

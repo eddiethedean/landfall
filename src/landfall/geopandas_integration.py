@@ -7,7 +7,7 @@ from PIL.Image import Image
 
 from landfall.color import process_colors
 from landfall.geojson import add_geometry, extract_geometries
-from landfall.plot import plot_zoom
+from landfall.plot import plot_zoom, set_tile_provider
 
 tp = staticmaps.tile_provider_OSM
 COLOR_PALETTES = {"distinct", "random", "wheel"}
@@ -72,6 +72,7 @@ def plot_geometry(
     zoom: int = 0,
     set_zoom: Optional[int] = None,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot a Shapely geometry in WGS84 (longitude, latitude) coordinates.
 
@@ -81,7 +82,7 @@ def plot_geometry(
     _check_geopandas_available()
     if context is None:
         context = staticmaps.Context()
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
     if not _add_geometry(context, geometry, "blue"):
         raise ValueError("No non-empty geometries to plot")
     return _render(context, window_size, zoom, set_zoom)
@@ -95,6 +96,7 @@ def plot_geometries(
     zoom: int = 0,
     set_zoom: Optional[int] = None,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot WGS84 Shapely geometries; skip null or empty entries.
 
@@ -104,7 +106,7 @@ def plot_geometries(
     _check_geopandas_available()
     if context is None:
         context = staticmaps.Context()
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
     positions = _drawable_positions(geometries)
     if not positions:
         raise ValueError("No non-empty geometries to plot")
@@ -152,6 +154,7 @@ def plot_geodataframe(
     zoom: int = 0,
     set_zoom: Optional[int] = None,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot a GeoDataFrame, reprojecting its selected geometry to WGS84.
 
@@ -188,7 +191,7 @@ def plot_geodataframe(
     sizes = _extract_gdf_sizes(gdf, size_column, positions)
     if context is None:
         context = staticmaps.Context()
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
     added = False
     for palette_position, row_position in enumerate(positions):
         geometry = geometries.iloc[row_position]

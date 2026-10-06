@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-10-05
+
+### Added
+- Forward optional tile-service API keys through plotting helpers.
+- Add a `cairo` extra for py-staticmaps anti-aliased PNG rendering.
+- Credit py-staticmaps and document its native API, bounds padding, renderers,
+  and keyed tile providers.
+
 ## [0.4.3] - 2026-10-03
 
 Published the source distribution and wheel to

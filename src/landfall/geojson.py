@@ -9,7 +9,7 @@ import staticmaps
 from PIL.Image import Image
 
 from landfall.lines import add_lines
-from landfall.plot import plot_zoom
+from landfall.plot import plot_zoom, set_tile_provider
 from landfall.points import add_points
 from landfall.polygons import add_polygon
 from landfall.validation import create_latlng
@@ -337,6 +337,7 @@ def plot_geojson(
     zoom: int = 0,
     set_zoom: Optional[int] = None,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot GeoJSON data on a map.
 
@@ -357,7 +358,7 @@ def plot_geojson(
     if context is None:
         context = staticmaps.Context()
 
-    context.set_tile_provider(tile_provider)
+    set_tile_provider(context, tile_provider, api_key)
 
     # Parse GeoJSON
     geojson = parse_geojson(geojson_data)
@@ -384,6 +385,7 @@ def plot_geojson_file(
     zoom: int = 0,
     set_zoom: Optional[int] = None,
     context: Optional[staticmaps.Context] = None,
+    api_key: Optional[str] = None,
 ) -> Image:
     """Plot GeoJSON data from a file.
 
@@ -415,4 +417,5 @@ def plot_geojson_file(
         zoom=zoom,
         set_zoom=set_zoom,
         context=context,
+        api_key=api_key,
     )
